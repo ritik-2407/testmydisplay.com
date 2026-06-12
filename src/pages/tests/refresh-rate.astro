@@ -1,0 +1,405 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Refresh Rate Test — Test My Display" description="Measure your display's actual refresh rate using frame-timing analysis." noFooter={true}>
+  <div class="page">
+    <div class="page-inner">
+      <a href="/" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        All Tests
+      </a>
+
+      <div class="content">
+        <div class="hero-stat">
+          <div class="fps-display">
+            <span class="fps-value" id="fps-value">--</span>
+            <span class="fps-unit">Hz</span>
+          </div>
+          <div class="fps-label">Measured Refresh Rate</div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-wrapper">
+          <canvas id="fps-chart" height="120" aria-label="Refresh rate over time chart"></canvas>
+        </div>
+
+        <!-- Stats grid -->
+        <div class="stats-grid">
+          <div class="stats-card">
+            <div class="stats-card-label">Average</div>
+            <div class="stats-card-value" id="avg-fps">--</div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-card-label">Min</div>
+            <div class="stats-card-value" id="min-fps">--</div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-card-label">Max</div>
+            <div class="stats-card-value" id="max-fps">--</div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-card-label">Samples</div>
+            <div class="stats-card-value" id="sample-count">0</div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="ctrl-row">
+          <button id="start-stop-btn" class="btn-primary-custom">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" id="play-icon"><path d="M4 2l8 5-8 5V2z" fill="currentColor"/></svg>
+            <span id="btn-label">Start Measuring</span>
+          </button>
+          <button id="reset-btn" class="btn-secondary-custom">Reset</button>
+        </div>
+
+        <!-- Info -->
+        <div class="info-box">
+          <h3 class="info-title">How it works</h3>
+          <p class="info-body">We use <code>requestAnimationFrame</code> to timestamp each rendered frame. By analyzing the intervals between frames over time, we calculate the actual refresh rate your GPU and display are delivering — which may differ from the spec if throttling or power-saving is active.</p>
+          <p class="info-body">For accurate results, run for at least 5 seconds with no other heavy activity on screen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const fpsEl = document.getElementById('fps-value')!;
+  const avgEl = document.getElementById('avg-fps')!;
+  const minEl = document.getElementById('min-fps')!;
+  const maxEl = document.getElementById('max-fps')!;
+  const sampleEl = document.getElementById('sample-count')!;
+  const startStopBtn = document.getElementById('start-stop-btn')!;
+  const resetBtn = document.getElementById('reset-btn')!;
+  const btnLabel = document.getElementById('btn-label')!;
+  const chart = document.getElementById('fps-chart') as HTMLCanvasElement;
+
+  let running = false;
+  let rafId: number | null = null;
+  let lastTime: number | null = null;
+  let fpsHistory: number[] = [];
+  let sampleBuffer: number[] = [];
+  const HISTORY_SIZE = 60;
+  let chartCtx: CanvasRenderingContext2D | null = null;
+
+  function setup() {
+    chart.width = chart.parentElement!.clientWidth;
+    chartCtx = chart.getContext('2d');
+  }
+
+  function drawChart() {
+    if (!chartCtx) return;
+    const w = chart.width;
+    const h = chart.height;
+    chartCtx.clearRect(0, 0, w, h);
+
+    if (fpsHistory.length < 2) return;
+
+    const allVals = fpsHistory;
+    const minV = Math.max(0, Math.min(...allVals) - 10);
+    const maxV = Math.max(...allVals) + 10;
+    const range = maxV - minV || 1;
+
+    // Grid lines
+    chartCtx.strokeStyle = '#f0f0f0';
+    chartCtx.lineWidth = 1;
+    [30, 60, 90, 120, 144, 165, 240].forEach(hz => {
+      if (hz < minV || hz > maxV) return;
+      const y = h - ((hz - minV) / range) * h;
+      chartCtx!.beginPath();
+      chartCtx!.moveTo(0, y);
+      chartCtx!.lineTo(w, y);
+      chartCtx!.stroke();
+      chartCtx!.font = '10px JetBrains Mono, monospace';
+      chartCtx!.fillStyle = '#bbb';
+      chartCtx!.textAlign = 'left';
+      chartCtx!.fillText(`${hz}`, 4, y - 3);
+    });
+
+    // Line
+    chartCtx.beginPath();
+    chartCtx.strokeStyle = '#007cf0';
+    chartCtx.lineWidth = 2;
+    chartCtx.lineJoin = 'round';
+    allVals.forEach((v, i) => {
+      const x = (i / (allVals.length - 1)) * w;
+      const y = h - ((v - minV) / range) * h;
+      i === 0 ? chartCtx!.moveTo(x, y) : chartCtx!.lineTo(x, y);
+    });
+    chartCtx.stroke();
+
+    // Fill
+    const lastX = w;
+    const lastY = h - ((allVals[allVals.length - 1] - minV) / range) * h;
+    chartCtx.lineTo(lastX, h);
+    chartCtx.lineTo(0, h);
+    chartCtx.closePath();
+    chartCtx.fillStyle = 'rgba(0, 124, 240, 0.08)';
+    chartCtx.fill();
+  }
+
+  function tick(timestamp: number) {
+    if (!running) return;
+    if (lastTime !== null) {
+      const delta = timestamp - lastTime;
+      const fps = 1000 / delta;
+      if (fps > 1 && fps < 500) {
+        sampleBuffer.push(fps);
+        // Average over 10 frames for stability
+        if (sampleBuffer.length >= 10) {
+          const avg = sampleBuffer.reduce((a, b) => a + b, 0) / sampleBuffer.length;
+          const rounded = Math.round(avg);
+          fpsEl.textContent = String(rounded);
+          fpsHistory.push(rounded);
+          if (fpsHistory.length > HISTORY_SIZE) fpsHistory.shift();
+          sampleBuffer = [];
+
+          const all = fpsHistory;
+          avgEl.textContent = String(Math.round(all.reduce((a,b) => a+b,0)/all.length));
+          minEl.textContent = String(Math.min(...all));
+          maxEl.textContent = String(Math.max(...all));
+          sampleEl.textContent = String(all.length);
+
+          drawChart();
+        }
+      }
+    }
+    lastTime = timestamp;
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startStop() {
+    running = !running;
+    if (running) {
+      lastTime = null;
+      rafId = requestAnimationFrame(tick);
+      btnLabel.textContent = 'Stop';
+      startStopBtn.style.background = '#ee0000';
+    } else {
+      if (rafId) cancelAnimationFrame(rafId);
+      btnLabel.textContent = 'Start Measuring';
+      startStopBtn.style.background = '';
+    }
+  }
+
+  function reset() {
+    running = false;
+    if (rafId) cancelAnimationFrame(rafId);
+    fpsHistory = [];
+    sampleBuffer = [];
+    lastTime = null;
+    fpsEl.textContent = '--';
+    avgEl.textContent = '--';
+    minEl.textContent = '--';
+    maxEl.textContent = '--';
+    sampleEl.textContent = '0';
+    btnLabel.textContent = 'Start Measuring';
+    startStopBtn.style.background = '';
+    if (chartCtx) chartCtx.clearRect(0, 0, chart.width, chart.height);
+  }
+
+  startStopBtn.addEventListener('click', startStop);
+  resetBtn.addEventListener('click', reset);
+  window.addEventListener('resize', () => {
+    setup();
+    drawChart();
+  });
+
+  setup();
+</script>
+
+<style>
+  .page {
+    padding: 64px 24px;
+    min-height: calc(100vh - 64px - 280px);
+  }
+
+  .page-inner {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #4d4d4d;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.15s;
+    margin-bottom: 32px;
+  }
+  .back-link:hover { background: #f5f5f5; color: #171717; }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .hero-stat {
+    text-align: center;
+    padding: 40px 24px;
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 16px;
+    box-shadow: 0 0 0 1px #00000008 inset, 0px 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .fps-display {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .fps-value {
+    font-size: 80px;
+    font-weight: 600;
+    color: #171717;
+    line-height: 1;
+    letter-spacing: -4px;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.2s;
+  }
+
+  .fps-unit {
+    font-size: 28px;
+    font-weight: 500;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  .fps-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .chart-wrapper {
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    padding: 16px;
+    overflow: hidden;
+  }
+
+  #fps-chart {
+    width: 100%;
+    display: block;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .stats-card {
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stats-card-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  .stats-card-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: #171717;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+  }
+
+  .ctrl-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn-primary-custom {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #171717;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 0 20px;
+    height: 44px;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.2s;
+  }
+  .btn-primary-custom:hover { opacity: 0.85; }
+
+  .btn-secondary-custom {
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ebebeb;
+    color: #4d4d4d;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 16px;
+    height: 44px;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .btn-secondary-custom:hover { border-color: #a1a1a1; color: #171717; }
+
+  .info-box {
+    background: #fafafa;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .info-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #171717;
+    margin: 0;
+  }
+
+  .info-body {
+    font-size: 14px;
+    line-height: 20px;
+    color: #4d4d4d;
+    margin: 0;
+  }
+
+  code {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    padding: 1px 5px;
+  }
+
+  @media (max-width: 500px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .fps-value { font-size: 60px; }
+  }
+</style>

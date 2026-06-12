@@ -1,0 +1,286 @@
+---
+const navLinks = [
+  { label: 'Tests', href: '/#tests' },
+  { label: 'Display Report', href: '/report' },
+  { label: 'About', href: '/about' },
+];
+---
+
+<!-- Desktop: floating capsule navbar -->
+<header class="navbar-capsule" role="banner">
+  <nav class="capsule-links" aria-label="Main navigation">
+    {navLinks.map(link => (
+      <a href={link.href} class="capsule-link">{link.label}</a>
+    ))}
+  </nav>
+  <div class="capsule-sep" aria-hidden="true"></div>
+  <button class="theme-toggle" id="theme-toggle-desktop" aria-label="Toggle light/dark mode">
+    <svg class="icon-moon" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M17.5 12.5A7.5 7.5 0 0 1 9 4a7.5 7.5 0 1 0 8.5 8.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <svg class="icon-sun" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </button>
+</header>
+
+<!-- Mobile: hamburger FAB (top-right) -->
+<button class="mobile-fab" id="menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+  <svg class="icon-ham" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+  <svg class="icon-x" width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+</button>
+
+<!-- Mobile: dropdown menu -->
+<nav class="mobile-menu" id="mobile-menu" aria-hidden="true" aria-label="Mobile navigation">
+  {navLinks.map(link => (
+    <a href={link.href} class="mobile-link">{link.label}</a>
+  ))}
+  <div class="mobile-menu-divider" aria-hidden="true"></div>
+  <button class="theme-toggle theme-toggle-mobile" id="theme-toggle-mobile" aria-label="Toggle light/dark mode">
+    <svg class="icon-moon" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M17.5 12.5A7.5 7.5 0 0 1 9 4a7.5 7.5 0 1 0 8.5 8.5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <svg class="icon-sun" width="15" height="15" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="4" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.93 4.93l1.41 1.41M13.66 13.66l1.41 1.41M4.93 15.07l1.41-1.41M13.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="theme-toggle-label">Toggle theme</span>
+  </button>
+</nav>
+
+<script>
+  function applyTheme(theme: string) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }
+
+  function setupThemeToggle(id: string) {
+    const btn = document.getElementById(id);
+    btn?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  setupThemeToggle('theme-toggle-desktop');
+  setupThemeToggle('theme-toggle-mobile');
+
+  const fabBtn = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  fabBtn?.addEventListener('click', () => {
+    const isOpen = mobileMenu?.getAttribute('aria-hidden') === 'false';
+    mobileMenu?.setAttribute('aria-hidden', String(isOpen));
+    fabBtn.setAttribute('aria-expanded', String(!isOpen));
+    fabBtn.classList.toggle('is-open', !isOpen);
+    mobileMenu?.classList.toggle('is-open', !isOpen);
+  });
+
+  // Close mobile menu on link click
+  mobileMenu?.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      fabBtn?.setAttribute('aria-expanded', 'false');
+      fabBtn?.classList.remove('is-open');
+      mobileMenu.classList.remove('is-open');
+    });
+  });
+</script>
+
+<style>
+  /* ── Desktop capsule ── */
+  .navbar-capsule {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--navbar-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1.5px solid var(--border);
+    border-radius: 9999px;
+    padding: 4px 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.08);
+    height: 44px;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  [data-theme="dark"] .navbar-capsule {
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 4px rgba(0, 0, 0, 0.35);
+  }
+
+  .capsule-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .capsule-link {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-body);
+    text-decoration: none;
+    padding: 5px 14px;
+    border-radius: 9999px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    letter-spacing: -0.1px;
+  }
+  .capsule-link:hover {
+    background-color: var(--bg-soft-2);
+    color: var(--text);
+  }
+
+  .capsule-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    flex-shrink: 0;
+    margin: 0 4px;
+  }
+
+  /* ── Shared theme toggle ── */
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 9999px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-body);
+    transition: background-color 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover {
+    background-color: var(--bg-soft-2);
+    color: var(--text);
+  }
+
+  /* Show moon in light, sun in dark */
+  .icon-sun { display: none; }
+  .icon-moon { display: flex; }
+  :global([data-theme="dark"]) .icon-sun { display: flex; }
+  :global([data-theme="dark"]) .icon-moon { display: none; }
+
+  /* ── Mobile FAB (hamburger) ── */
+  .mobile-fab {
+    display: none;
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 101;
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    color: var(--text);
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .mobile-fab:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  }
+
+  /* Toggle hamburger ↔ X */
+  .mobile-fab .icon-ham { display: flex; }
+  .mobile-fab .icon-x  { display: none;  }
+  .mobile-fab.is-open .icon-ham { display: none;  }
+  .mobile-fab.is-open .icon-x  { display: flex; }
+
+  /* ── Mobile dropdown menu ── */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    top: 64px;
+    right: 16px;
+    z-index: 100;
+    min-width: 200px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16), 0 2px 8px rgba(0, 0, 0, 0.10);
+    flex-direction: column;
+    gap: 2px;
+
+    /* Animate in */
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+    transform-origin: top right;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .mobile-menu.is-open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  [data-theme="dark"] .mobile-menu {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .mobile-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-body);
+    text-decoration: none;
+    padding: 9px 14px;
+    border-radius: 10px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    display: block;
+  }
+  .mobile-link:hover {
+    background-color: var(--bg-soft-2);
+    color: var(--text);
+  }
+
+  .mobile-menu-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 6px;
+  }
+
+  .theme-toggle-mobile {
+    width: 100%;
+    height: 38px;
+    border-radius: 10px;
+    justify-content: flex-start;
+    padding: 0 14px;
+    gap: 10px;
+  }
+  .theme-toggle-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-body);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .navbar-capsule {
+      display: none;
+    }
+    .mobile-fab {
+      display: flex;
+    }
+    .mobile-menu {
+      display: flex;
+    }
+  }
+</style>

@@ -1,0 +1,158 @@
+---
+const year = new Date().getFullYear();
+
+const tests = [
+  { label: 'Touch Screen Test', href: '/tests/touch' },
+  { label: 'Dead Pixel Test', href: '/tests/dead-pixel' },
+  { label: 'Stuck Pixel Fixer', href: '/tests/stuck-pixel' },
+  { label: 'Multi Touch Test', href: '/tests/multi-touch' },
+  { label: 'Refresh Rate Test', href: '/tests/refresh-rate' },
+  { label: 'Color Accuracy Test', href: '/tests/color' },
+  { label: 'Brightness Test', href: '/tests/brightness' },
+  { label: 'Backlight Bleed Test', href: '/tests/backlight-bleed' },
+];
+---
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="footer-logo">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="3" width="18" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="10" cy="9" r="2.5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        <span>Test My Display</span>
+      </a>
+      <p class="footer-tagline">Free, browser-based display testing tools. No downloads, no ads, no nonsense.</p>
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-col-label">Tests</span>
+      {tests.slice(0, 4).map(t => (
+        <a href={t.href} class="footer-link">{t.label}</a>
+      ))}
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-col-label">More Tests</span>
+      {tests.slice(4).map(t => (
+        <a href={t.href} class="footer-link">{t.label}</a>
+      ))}
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-col-label">Resources</span>
+      <a href="/about" class="footer-link">About</a>
+      <a href="/report" class="footer-link">Display Report</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© {year} testmydisplay.com — All rights reserved.</p>
+    <p>Not affiliated with any device manufacturer.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--footer-bg);
+    border-top: 1px solid var(--border);
+    padding: 64px 24px 32px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    transition: color 0.15s ease;
+  }
+  .footer-logo:hover { color: var(--accent); }
+
+  .footer-tagline {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--text-mute);
+    margin: 0;
+    max-width: 280px;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-col-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 4px;
+    opacity: 0.8;
+  }
+
+  .footer-link {
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--text-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-link:hover { color: var(--accent); }
+
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 48px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    opacity: 0.75;
+  }
+
+  .footer-bottom p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-mute);
+  }
+
+  @media (max-width: 900px) {
+    .footer-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

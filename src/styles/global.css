@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────
+   LIGHT MODE
+   Page gradient: #d4d4d4 → #c8c8c8  (proper mid-grey, not white)
+   Cards at #e2e2e2 — elevated above the canvas
+   Accent darkened to #7ab800 for legibility on grey
+   ───────────────────────────────────────────── */
+:root {
+  --bg:            #e2e2e2;   /* card / elevated surface  */
+  --bg-soft:       #d4d4d4;   /* gradient start           */
+  --bg-soft-2:     #c8c8c8;   /* gradient end / deepest   */
+  --text:          #0a0a0a;   /* near-black — max contrast */
+  --text-body:     #262626;   /* punchy body text         */
+  --text-mute:     #5e5e5e;   /* muted, still readable    */
+  --border:        #a8a8a8;   /* visible on grey canvas   */
+  --border-strong: #707070;   /* heavy emphasis           */
+  --navbar-bg:     rgba(202, 202, 202, 0.92);
+  --footer-bg:     #b4b4b4;   /* clearly darker than page */
+  --accent:        #74ad02;   /* darker parrot-green — legible on grey */
+  --accent-dim:    rgba(122, 184, 0, 0.15);
+  --accent-border: rgba(122, 184, 0, 0.45);
+  --accent-text:   #ffffff;   /* white text on dark green button */
+  --accent-hover:  #689e00;
+  /* prominent shadows on grey canvas */
+  --card-shadow:
+    0 1px 2px  rgba(0, 0, 0, 0.14),
+    0 3px 10px rgba(0, 0, 0, 0.10),
+    0 0   0 1px rgba(0, 0, 0, 0.07);
+  --card-shadow-hover:
+    0 0   0 1px rgba(122, 184, 0, 0.50) inset,
+    0 6px 20px rgba(0, 0, 0, 0.15),
+    0 2px 6px  rgba(0, 0, 0, 0.10);
+}
+
+/* ─────────────────────────────────────────────
+   DARK MODE
+   ───────────────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:            #252525;
+  --bg-soft:       #1e1e1e;
+  --bg-soft-2:     #2d2d2d;
+  --text:          #f0f0f0;
+  --text-body:     #999999;
+  --text-mute:     #505050;
+  --border:        #353535;
+  --border-strong: #4e4e4e;
+  --navbar-bg:     rgba(22, 22, 22, 0.92);
+  --footer-bg:     #111111;
+  --accent:        #aadc32;
+  --accent-dim:    rgba(170, 220, 50, 0.10);
+  --accent-border: rgba(170, 220, 50, 0.40);
+  --accent-text:   #0e1f00;
+  --accent-hover:  #bfee45;
+  --card-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 3px rgba(0, 0, 0, 0.40);
+  --card-shadow-hover:
+    0 0 0 1px rgba(170, 220, 50, 0.28) inset,
+    0 2px 10px rgba(0, 0, 0, 0.50);
+}
+
+@theme {
+  --font-sans:    Inter, system-ui, -apple-system, sans-serif;
+  --font-display: 'HUITSIDE', 'Trebuchet MS', system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Monaco, monospace;
+
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-pill: 100px;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    font-family: var(--font-sans);
+    /* single unified gradient — all sections sit transparently on top */
+    background: linear-gradient(170deg, var(--bg-soft) 0%, var(--bg-soft-2) 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    min-height: 100vh;
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar { display: none; }
+  *::-webkit-scrollbar    { display: none; }
+  * { scrollbar-width: none; }
+
+  /* Landing page bg image — light theme only */
+  html:not([data-theme="dark"]):has(body.home-page) {
+    background-image: url('/bg.png');
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-text);
+  }
+}
+
+@layer components {
+  /* ── Buttons ── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: var(--accent);
+    color: var(--accent-text);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 0 24px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { background-color: var(--accent-hover); }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background-color: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0 24px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+    white-space: nowrap;
+    box-shadow: var(--card-shadow);
+  }
+  .btn-secondary:hover {
+    border-color: var(--border-strong);
+    background-color: var(--bg-soft);
+  }
+
+  /* ── Cards ── */
+  .card {
+    background-color: var(--bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+  }
+
+  .card-soft {
+    background-color: var(--bg-soft);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Badge ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--accent-dim);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 0 8px;
+    height: 22px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--accent-border);
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Labels ── */
+  .mono-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: 0.03em;
+    color: var(--text);
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(64px, 9.5vw, 116px);
+    font-weight: 400;
+    line-height: 0.96;
+    letter-spacing: 0.03em;
+    color: var(--text);
+  }
+}

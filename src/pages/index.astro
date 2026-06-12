@@ -1,11 +1,483 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import TestCard from '../components/TestCard.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const touchIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5V8a2.5 2.5 0 0 0 5 0v6.5"/><path d="M7 14.5h10a5 2 0 0 1-10 0z"/></svg>`;
+const deadPixelIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><rect x="10" y="8" width="4" height="4" rx="0.5" fill="currentColor" stroke="none"/></svg>`;
+const stuckPixelIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5a2.12 2.12 0 0 1-3-3L12 9"/><path d="m21.5 11.5-1.91-1.91A2 2 0 0 1 19 8.17V7l-2.26-2.26a6 6 0 0 0-4.2-1.76L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.17a2 2 0 0 1 1.42.59L18.5 14"/></svg>`;
+const multiTouchIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><path d="M7 9.5v3M17 9.5v3M12 14.5v-3"/></svg>`;
+const refreshRateIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="12" r="3"/><path d="M3 8h7M3 12h5M3 16h7"/></svg>`;
+const colorIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/><path d="M20 4L12 12"/></svg>`;
+const brightnessIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`;
+const backlightIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l6.5 9a7.5 7.5 0 1 1-13 0L12 3z"/></svg>`;
+
+
+const tests = [
+  {
+    title: 'Touch Screen Test',
+    description: '',
+    href: '/tests/touch',
+    icon: touchIcon,
+   
+  },
+  {
+    title: 'Multi Touch Test',
+    description: 'Test how many simultaneous touch points your screen accurately tracks.',
+    href: '/tests/multi-touch',
+    icon: multiTouchIcon,
+  },
+  {
+    title: 'Dead Pixel Test',
+    description: 'Cycle through solid colors to spot pixels that never change (dead pixels).',
+    href: '/tests/dead-pixel',
+    icon: deadPixelIcon,
+  },
+  {
+    title: 'Backlight Bleed Test',
+    description: 'In a dark room, check for light leaking from the edges of your display.',
+    href: '/tests/backlight-bleed',
+    icon: backlightIcon,
+  },
+  {
+    title: 'Refresh Rate Test',
+    description: 'Measure your display\'s actual refresh rate using frame-timing animation.',
+    href: '/tests/refresh-rate',
+    icon: refreshRateIcon,
+  },
+  {
+    title: 'Color Accuracy Test',
+    description: 'Check gradients, primary and secondary colors, and color banding.',
+    href: '/tests/color',
+    icon: colorIcon,
+  },
+  {
+    title: 'Stuck Pixel Fixer',
+    description: 'Rapidly flash colors at high frequency to coax stuck pixels back to life.',
+    href: '/tests/stuck-pixel',
+    icon: stuckPixelIcon,
+  },
+  
+  
+  
+  {
+    title: 'Brightness Test',
+    description: 'Test your display\'s brightness uniformity and black-level performance.',
+    href: '/tests/brightness',
+    icon: brightnessIcon,
+  },
+  
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Test My Display — Free Display Health Tools" bodyClass="home-page">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-inner">
+      
+      <h1 class="hero-title">
+        Test your display<br />
+        <span class="hero-title-emphasis">inside out</span>
+      </h1>
+
+      <p class="hero-body">
+        Tools to test every aspect of your screen — from dead pixels to touch accuracy & refresh rate. Works on all devices.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#tests" class="btn-primary">Start Testing</a>
+        <a href="/report" class="btn-secondary">View Display Report</a>
+      </div>
+
+      <!-- Live Device Stats -->
+      {/* <div class="device-stats" id="device-stats">
+        <div class="stat-item">
+          <span class="stat-label">Resolution</span>
+          <span class="stat-value" id="stat-resolution">—</span>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span class="stat-label">Pixel Ratio</span>
+          <span class="stat-value" id="stat-dpr">—</span>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span class="stat-label">Color Depth</span>
+          <span class="stat-value" id="stat-color">—</span>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span class="stat-label">Touch Points</span>
+          <span class="stat-value" id="stat-touch">—</span>
+        </div>
+        <div class="stat-divider" aria-hidden="true"></div>
+        <div class="stat-item">
+          <span class="stat-label">Est. FPS</span>
+          <span class="stat-value" id="stat-fps">—</span>
+        </div>
+      </div>
+    </div>
+  </section> */}
+
+  <!-- Tests Grid -->
+  <section class="tests-section" id="tests">
+    <div class="tests-inner">
+      <div class="tests-header">
+        <span class="mono-label">Display Tests</span>
+        <h2 class="section-title">Choose a test</h2>
+      </div>
+
+      <div class="tests-grid">
+        {tests.map(test => (
+          <TestCard
+            title={test.title}
+            description={test.description}
+            href={test.href}
+            icon={test.icon}
+            
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Features section -->
+  <section class="features-section">
+    <div class="features-inner">
+      <div class="feature-item">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2L2 7v6l8 5 8-5V7L10 2z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>
+            <path d="M10 12V7m0 0L7 9m3-2l3 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="feature-title">No data collected</h3>
+          <p class="feature-body">All tests run entirely in your browser. No camera, no uploads, no telemetry.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <path d="M6 10h8M10 6v8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="feature-title">Works on all devices</h3>
+          <p class="feature-body">Phone, tablet, laptop, or desktop monitor — every test adapts to your screen.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <path d="M7 10l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="feature-title">Zero installations</h3>
+          <p class="feature-body">Open a URL, run a test. No app store, no extensions, no permissions needed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<script>
+  function updateDeviceStats() {
+    const resolution = document.getElementById('stat-resolution');
+    const dpr = document.getElementById('stat-dpr');
+    const color = document.getElementById('stat-color');
+    const touch = document.getElementById('stat-touch');
+    const fps = document.getElementById('stat-fps');
+
+    if (resolution) resolution.textContent = `${screen.width} × ${screen.height}`;
+    if (dpr) dpr.textContent = `${window.devicePixelRatio}×`;
+    if (color) color.textContent = `${screen.colorDepth}-bit`;
+    if (touch) touch.textContent = navigator.maxTouchPoints > 0
+      ? `${navigator.maxTouchPoints} pts`
+      : 'None';
+
+    let frameCount = 0;
+    let lastTime = performance.now();
+    function measureFPS(time: number) {
+      frameCount++;
+      if (time - lastTime >= 1000) {
+        if (fps) fps.textContent = `${frameCount} Hz`;
+        frameCount = 0;
+        lastTime = time;
+      }
+      requestAnimationFrame(measureFPS);
+    }
+    requestAnimationFrame(measureFPS);
+  }
+
+  updateDeviceStats();
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    padding: 100px 32px 96px;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 860px;
+    height: 520px;
+    background: radial-gradient(ellipse at center, var(--accent-dim) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    padding: 4px 12px;
+    font-size: 13px;
+    color: var(--text-body);
+    margin-bottom: 32px;
+  }
+
+  .hero-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-mute);
+    flex-shrink: 0;
+  }
+
+  .hero-title {
+    /* inherits font-family and size from global .hero-title */
+    margin: 0 0 32px;
+  }
+
+  .hero-title-emphasis {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-body {
+    font-size: 19px;
+    line-height: 30px;
+    color: var(--text-body);
+    margin: 0 auto 40px;
+    max-width: 560px;
+    font-weight: 400;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 64px;
+  }
+
+  .device-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .device-stats::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    border: 1px solid var(--accent-border);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    gap: 2px;
+  }
+
+  .stat-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.3px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  .tests-section {
+    padding: 64px 32px 80px;
+    background: transparent;
+  }
+
+  .tests-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .tests-header {
+    max-width: 600px;
+    margin: 0 auto 36px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .section-title {
+    /* inherits from global .section-title */
+    margin: 0;
+  }
+
+  .tests-subtitle {
+    font-size: 16px;
+    line-height: 26px;
+    color: var(--text-body);
+    margin: 0;
+  }
+
+  .tests-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .features-section {
+    padding: 80px 32px 96px;
+    background: transparent;
+  }
+
+  .features-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 56px;
+  }
+
+  .feature-item {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  .feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+
+  .feature-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 6px;
+    letter-spacing: -0.2px;
+  }
+
+  .feature-body {
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--text-body);
+    margin: 0;
+  }
+
+  @media (max-width: 900px) {
+    .features-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 72px 20px 64px;
+    }
+    .tests-section {
+      padding: 72px 20px;
+    }
+    .features-section {
+      padding: 64px 20px 72px;
+    }
+    .device-stats {
+      flex-wrap: wrap;
+      max-width: 100%;
+    }
+    .stat-divider {
+      display: none;
+    }
+    .stat-item {
+      padding: 10px 16px;
+    }
+    .features-inner {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .tests-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      padding: 56px 16px 52px;
+    }
+    .hero-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .hero-actions a {
+      text-align: center;
+    }
+  }
+</style>

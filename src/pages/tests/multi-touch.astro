@@ -1,0 +1,448 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Multi Touch Test — Test My Display" description="Test how many simultaneous touch points your screen can accurately track." noFooter={true}>
+  <div class="test-wrapper">
+
+    <!-- Header bar -->
+    <header class="test-header">
+      <div class="test-header-inner">
+        <a href="/" class="back-link">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          All Tests
+        </a>
+
+        <div class="test-meta">
+          <h1 class="test-title">Multi Touch Test</h1>
+        </div>
+
+        <div class="test-stats-row">
+          <div class="stat-box">
+            <span class="stat-num accent" id="current-count">0</span>
+            <span class="stat-label">Active</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-box">
+            <span class="stat-num" id="max-count">0</span>
+            <span class="stat-label">Peak</span>
+          </div>
+          <div class="stat-divider" aria-hidden="true"></div>
+          <div class="stat-box">
+            <span class="stat-num" id="supported-count">—</span>
+            <span class="stat-label">Supported</span>
+          </div>
+          <button class="reset-btn" id="reset-btn" aria-label="Reset test">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 105-5H5m0 0L3 0m2 2L3 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Canvas area -->
+    <div class="touch-canvas-area" id="touch-area">
+      <canvas id="mt-canvas"></canvas>
+
+      <!-- Empty state hint -->
+      <div class="empty-hint" id="empty-hint">
+        <div class="empty-hint-inner">
+          <div class="hint-icon" aria-hidden="true">
+            <svg width="44" height="44" viewBox="0 0 48 48" fill="none">
+              <circle cx="14" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="34" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="24" cy="36" r="5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M14 17v8M34 17v8M24 31v-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="14" cy="12" r="10" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+              <circle cx="34" cy="12" r="10" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+              <circle cx="24" cy="36" r="10" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+            </svg>
+          </div>
+          <p class="hint-main">Place your fingers here</p>
+          <p class="hint-sub">Your device supports up to <strong id="max-pts">?</strong> touch points</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</Layout>
+
+<script>
+  const COLORS = [
+    '#007cf0','#ff0080','#00c896','#f9cb28','#9b5de5',
+    '#ff4d4d','#00dfd8','#a78bfa','#34d399','#fb923c',
+  ];
+
+  const canvas   = document.getElementById('mt-canvas') as HTMLCanvasElement;
+  const area     = document.getElementById('touch-area')!;
+  const currentEl  = document.getElementById('current-count')!;
+  const maxEl      = document.getElementById('max-count')!;
+  const supportedEl = document.getElementById('supported-count')!;
+  const maxPtsEl   = document.getElementById('max-pts')!;
+  const emptyHint  = document.getElementById('empty-hint')!;
+  const resetBtn   = document.getElementById('reset-btn')!;
+
+  let ctx: CanvasRenderingContext2D | null = null;
+  let maxTouches = 0;
+  const touchColors: Map<number, string> = new Map();
+  let colorIndex = 0;
+
+  // Ripple state: identifier → {x, y, color, birth: timestamp}
+  const ripples: Map<number, { x: number; y: number; color: string; born: number }> = new Map();
+
+  const maxPts = navigator.maxTouchPoints || 0;
+  supportedEl.textContent = maxPts > 0 ? `${maxPts} pts` : 'None';
+  maxPtsEl.textContent    = maxPts > 0 ? String(maxPts) : 'unknown';
+
+  function resize() {
+    canvas.width  = area.clientWidth;
+    canvas.height = area.clientHeight;
+    ctx = canvas.getContext('2d');
+  }
+
+  function draw(touches: TouchList | null) {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (!touches || touches.length === 0) {
+      emptyHint.style.opacity = '1';
+      currentEl.textContent = '0';
+      return;
+    }
+
+    emptyHint.style.opacity = '0';
+    currentEl.textContent = String(touches.length);
+
+    if (touches.length > maxTouches) {
+      maxTouches = touches.length;
+      maxEl.textContent = String(maxTouches);
+    }
+
+    const rect   = canvas.getBoundingClientRect();
+    const now    = performance.now();
+    const RIPPLE_DURATION = 600; // ms
+
+    // Draw active ripples
+    ripples.forEach((r, id) => {
+      const age  = now - r.born;
+      if (age > RIPPLE_DURATION) { ripples.delete(id); return; }
+      const t    = age / RIPPLE_DURATION;
+      const radius = 30 + t * 40;
+      const alpha  = (1 - t) * 0.35;
+      ctx!.beginPath();
+      ctx!.arc(r.x, r.y, radius, 0, Math.PI * 2);
+      ctx!.strokeStyle = r.color + Math.round(alpha * 255).toString(16).padStart(2, '0');
+      ctx!.lineWidth = 1.5;
+      ctx!.stroke();
+    });
+
+    Array.from(touches).forEach(touch => {
+      if (!touchColors.has(touch.identifier)) {
+        touchColors.set(touch.identifier, COLORS[colorIndex % COLORS.length]);
+        colorIndex++;
+      }
+      const color = touchColors.get(touch.identifier)!;
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      const label = String((touch.identifier % 10) + 1);
+
+      // Outer glow ring
+      ctx!.beginPath();
+      ctx!.arc(x, y, 46, 0, Math.PI * 2);
+      ctx!.strokeStyle = color + '25';
+      ctx!.lineWidth = 12;
+      ctx!.stroke();
+
+      // Mid ring
+      ctx!.beginPath();
+      ctx!.arc(x, y, 30, 0, Math.PI * 2);
+      ctx!.fillStyle = color + '20';
+      ctx!.fill();
+      ctx!.strokeStyle = color + '90';
+      ctx!.lineWidth = 1.5;
+      ctx!.stroke();
+
+      // Inner filled circle
+      ctx!.beginPath();
+      ctx!.arc(x, y, 18, 0, Math.PI * 2);
+      ctx!.fillStyle = color;
+      ctx!.fill();
+
+      // Finger number label
+      ctx!.font = 'bold 13px Inter, system-ui, sans-serif';
+      ctx!.fillStyle = '#ffffff';
+      ctx!.textAlign = 'center';
+      ctx!.textBaseline = 'middle';
+      ctx!.fillText(label, x, y);
+
+      // Coordinate label below
+      ctx!.font = '500 11px Inter, system-ui, sans-serif';
+      ctx!.fillStyle = color;
+      ctx!.textBaseline = 'top';
+      ctx!.fillText(`${Math.round(x)}, ${Math.round(y)}`, x, y + 52);
+    });
+  }
+
+  function onTouchStart(e: TouchEvent) {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    Array.from(e.changedTouches).forEach(t => {
+      const color = touchColors.get(t.identifier) ?? COLORS[colorIndex % COLORS.length];
+      ripples.set(t.identifier, {
+        x: t.clientX - rect.left,
+        y: t.clientY - rect.top,
+        color,
+        born: performance.now(),
+      });
+    });
+    draw(e.touches);
+  }
+
+  area.addEventListener('touchstart',  onTouchStart, { passive: false });
+  area.addEventListener('touchmove',   e => { e.preventDefault(); draw(e.touches); }, { passive: false });
+  area.addEventListener('touchend',    e => { e.preventDefault(); Array.from(e.changedTouches).forEach(t => touchColors.delete(t.identifier)); draw(e.touches); }, { passive: false });
+  area.addEventListener('touchcancel', e => { e.preventDefault(); Array.from(e.changedTouches).forEach(t => touchColors.delete(t.identifier)); draw(e.touches); }, { passive: false });
+
+  resetBtn.addEventListener('click', () => {
+    touchColors.clear();
+    ripples.clear();
+    maxTouches = 0;
+    colorIndex = 0;
+    maxEl.textContent = '0';
+    currentEl.textContent = '0';
+    if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    emptyHint.style.opacity = '1';
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+</script>
+
+<style>
+  /* ── Layout ───────────────────────────────────────── */
+  .test-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 80px);
+    background: transparent;
+  }
+
+  /* ── Header ───────────────────────────────────────── */
+  .test-header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 0 var(--border);
+  }
+
+  .test-header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: 70px;
+    flex-wrap: wrap;
+    padding: 10px 0;
+  }
+
+  /* ── Back link ────────────────────────────────────── */
+  .back-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: var(--text-mute);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .back-link:hover {
+    background: var(--bg-soft);
+    color: var(--text);
+  }
+
+  /* ── Test meta ────────────────────────────────────── */
+  .test-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .test-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.4px;
+    line-height: 1.2;
+  }
+
+  .test-subtitle {
+    font-size: 12px;
+    color: var(--text-mute);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── Stats row ────────────────────────────────────── */
+  .test-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+  }
+
+  .stat-num {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .stat-num.accent { color: var(--accent); }
+
+  .stat-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+    flex-shrink: 0;
+    margin: 0 4px;
+  }
+
+  .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-mute);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    white-space: nowrap;
+    margin-left: 8px;
+  }
+  .reset-btn:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+    background: var(--bg-soft);
+  }
+
+  /* ── Touch canvas area ────────────────────────────── */
+  .touch-canvas-area {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: crosshair;
+    /* Themed dot-grid background */
+    background-color: var(--bg-soft);
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  #mt-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── Empty hint ───────────────────────────────────── */
+  .empty-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .empty-hint-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .hint-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: var(--card-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+  }
+
+  .hint-main {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-body);
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .hint-sub {
+    font-size: 13px;
+    color: var(--text-mute);
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .hint-sub strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── Responsive ───────────────────────────────────── */
+  @media (max-width: 640px) {
+    .test-header { padding: 0 14px; }
+    .test-header-inner { gap: 12px; }
+    .test-subtitle { display: none; }
+    .stat-box { padding: 5px 10px; }
+    .stat-num { font-size: 17px; }
+    .stat-divider { margin: 0 2px; }
+    .reset-btn { margin-left: 4px; padding: 6px 10px; }
+  }
+
+  @media (max-width: 400px) {
+    .stat-divider { display: none; }
+    .test-stats-row { gap: 6px; }
+  }
+</style>

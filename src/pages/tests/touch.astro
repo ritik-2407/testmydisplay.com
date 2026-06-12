@@ -1,0 +1,291 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Touch Screen Test — Test My Display" description="Test your touchscreen by sliding over every grid zone. Instantly see which areas respond and which don't." fullscreen={true}>
+  <div class="touch-wrapper" id="touch-wrapper">
+    <!-- Touch Grid -->
+    <div class="touch-area" id="touch-area" aria-label="Touch test grid">
+      <canvas id="touch-canvas"></canvas>
+    </div>
+
+    <!-- Floating HUD -->
+    <div class="hud" id="hud">
+      <a href="/" class="hud-back" aria-label="Back to all tests">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div class="hud-stat">
+        <span class="hud-num" id="touched-count">0</span>
+        <span class="hud-label">Touched</span>
+      </div>
+      <div class="hud-stat">
+        <span class="hud-num" id="total-count">0</span>
+        <span class="hud-label">Total</span>
+      </div>
+      <div class="hud-stat">
+        <span class="hud-num" id="pct-count">0%</span>
+        <span class="hud-label">Coverage</span>
+      </div>
+      <button id="reset-btn" class="hud-btn" aria-label="Reset test">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 105-5H5m0 0L3 0m2 2L3 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Reset
+      </button>
+    </div>
+
+    <!-- Result Banner -->
+    <div class="result-banner" id="result-banner" role="status" aria-live="polite" hidden>
+      <div class="result-inner">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="#0070f3" stroke-width="1.5" fill="none"/><path d="M8 12l3 3 5-5" stroke="#0070f3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="result-text">Your touchscreen passed!</span>
+        <button id="dismiss-result" class="hud-btn" aria-label="Dismiss result">Dismiss</button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  const COLS = 20;
+  const ROWS = 14;
+  const UNTOUCHED = '#dbeafe';
+  const TOUCHED = '#f97316';
+
+  const canvas = document.getElementById('touch-canvas') as HTMLCanvasElement;
+  const area = document.getElementById('touch-area')!;
+  const resetBtn = document.getElementById('reset-btn')!;
+  const resultBanner = document.getElementById('result-banner')! as HTMLDivElement;
+  const dismissBtn = document.getElementById('dismiss-result')!;
+  const touchedEl = document.getElementById('touched-count')!;
+  const totalEl = document.getElementById('total-count')!;
+  const pctEl = document.getElementById('pct-count')!;
+  const resultText = document.getElementById('result-text')!;
+
+  let grid: boolean[][] = [];
+  let cellW = 0;
+  let cellH = 0;
+  let ctx: CanvasRenderingContext2D | null = null;
+
+  function initGrid() {
+    grid = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+    updateStats();
+    draw();
+  }
+
+  function resize() {
+    const w = area.clientWidth;
+    const h = area.clientHeight;
+    canvas.width = w;
+    canvas.height = h;
+    ctx = canvas.getContext('2d');
+    cellW = w / COLS;
+    cellH = h / ROWS;
+    draw();
+  }
+
+  function draw() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const x = c * cellW;
+        const y = r * cellH;
+        ctx.fillStyle = grid[r][c] ? TOUCHED : UNTOUCHED;
+        ctx.fillRect(x + 1, y + 1, cellW - 2, cellH - 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x + 1, y + 1, cellW - 2, cellH - 2);
+      }
+    }
+  }
+
+  function markCell(clientX: number, clientY: number) {
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const c = Math.floor(x / cellW);
+    const r = Math.floor(y / cellH);
+    if (r >= 0 && r < ROWS && c >= 0 && c < COLS) {
+      if (!grid[r][c]) {
+        grid[r][c] = true;
+        if (ctx) {
+          ctx.fillStyle = TOUCHED;
+          ctx.fillRect(c * cellW + 1, r * cellH + 1, cellW - 2, cellH - 2);
+          ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(c * cellW + 1, r * cellH + 1, cellW - 2, cellH - 2);
+        }
+        updateStats();
+      }
+    }
+  }
+
+  function updateStats() {
+    const touched = grid.flat().filter(Boolean).length;
+    const total = ROWS * COLS;
+    const pct = Math.round((touched / total) * 100);
+    touchedEl.textContent = String(touched);
+    totalEl.textContent = String(total);
+    pctEl.textContent = `${pct}%`;
+
+    if (touched === total) {
+      resultText.textContent = '🎉 Your touchscreen passed! 100% coverage.';
+      resultBanner.hidden = false;
+    }
+  }
+
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    Array.from(e.touches).forEach(t => markCell(t.clientX, t.clientY));
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    Array.from(e.touches).forEach(t => markCell(t.clientX, t.clientY));
+  }, { passive: false });
+
+  let mouseDown = false;
+  canvas.addEventListener('mousedown', e => { mouseDown = true; markCell(e.clientX, e.clientY); });
+  canvas.addEventListener('mousemove', e => { if (mouseDown) markCell(e.clientX, e.clientY); });
+  window.addEventListener('mouseup', () => { mouseDown = false; });
+
+  resetBtn.addEventListener('click', () => {
+    initGrid();
+    resultBanner.hidden = true;
+  });
+
+  dismissBtn.addEventListener('click', () => {
+    resultBanner.hidden = true;
+  });
+
+  window.addEventListener('resize', resize);
+
+  initGrid();
+  resize();
+</script>
+
+<style>
+  .touch-wrapper {
+    position: fixed;
+    inset: 0;
+    background: #f0f7ff;
+  }
+
+  .touch-area {
+    position: absolute;
+    inset: 0;
+    cursor: crosshair;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #touch-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  /* Floating HUD — bottom-center */
+  .hud {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10);
+    pointer-events: auto;
+  }
+
+  .hud-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    color: #555;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .hud-back:hover { background: #f0f0f0; color: #111; }
+
+  .hud-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+  }
+
+  .hud-num {
+    font-size: 17px;
+    font-weight: 600;
+    color: #171717;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.4px;
+    line-height: 1;
+  }
+
+  .hud-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 9px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .hud-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #444;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .hud-btn:hover {
+    border-color: #a1a1a1;
+    color: #171717;
+    background: #fafafa;
+  }
+
+  /* Result Banner */
+  .result-banner {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: #fff;
+    border: 1px solid #ebebeb;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    padding: 0 20px;
+  }
+
+  .result-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 52px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #171717;
+    white-space: nowrap;
+  }
+</style>
