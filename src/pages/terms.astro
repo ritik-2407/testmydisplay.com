@@ -1,0 +1,190 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const lastUpdated = 'June 14, 2026';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Terms & Conditions — TestMyDisplay",
+  "url": "https://testmydislay.com/terms",
+  "description": "Terms and Conditions for using TestMyDisplay, a free browser-based display testing tool.",
+  "dateModified": "2026-06-14"
+};
+---
+
+<Layout
+  title="Terms & Conditions — TestMyDisplay"
+  description="Terms and Conditions for TestMyDisplay. Free to use, no warranties implied. Read our terms before using the display testing tools."
+  keywords="testmydisplay terms and conditions, display test terms of service, screen test terms"
+  canonical="https://testmydislay.com/terms"
+  jsonLd={jsonLd}
+>
+  <div class="page-wrap">
+    <section class="hero">
+      <div class="hero-eyebrow">Terms &amp; Conditions</div>
+      <h1 class="hero-title">Simple terms for<br/>a simple tool.</h1>
+      <p class="hero-sub">TestMyDisplay is free to use. These terms explain what you can expect from us and what we expect from you.</p>
+      <div class="last-updated">Last updated: {lastUpdated}</div>
+    </section>
+
+    <div class="policy-body">
+      <section class="policy-section">
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing and using TestMyDisplay ("the Service"), you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, please do not use the Service.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>2. Description of Service</h2>
+        <p>TestMyDisplay provides free, browser-based tools for testing display hardware including but not limited to: dead pixel detection, touch screen accuracy, refresh rate measurement, backlight bleed visualization, response time estimation, and multi-touch support checking.</p>
+        <p>All tests run locally in your browser using standard Web APIs. The Service does not collect, transmit, or store your test data.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>3. Use of the Service</h2>
+        <p>You may use the Service for personal, educational, or commercial purposes at no cost. You agree not to:</p>
+        <ul>
+          <li>Use the Service in any way that violates applicable laws or regulations.</li>
+          <li>Attempt to reverse-engineer, scrape, or exploit the Service in a way that could damage or degrade its operation for other users.</li>
+          <li>Redistribute the Service or its content as your own without attribution.</li>
+          <li>Use automated tools to bulk-access or stress-test the Service's hosting infrastructure.</li>
+        </ul>
+      </section>
+
+      <section class="policy-section">
+        <h2>4. No Warranties</h2>
+        <p>The Service is provided "as is" and "as available" without warranty of any kind, either express or implied. We make no warranty that:</p>
+        <ul>
+          <li>The Service will meet your specific requirements.</li>
+          <li>The Service will be uninterrupted, timely, secure, or error-free.</li>
+          <li>Test results will be 100% accurate for all hardware configurations.</li>
+        </ul>
+        <p>Display test results are diagnostic aids, not professional hardware certifications. For critical purchasing decisions, we recommend consulting hardware documentation and professional reviews in addition to any results from this tool.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>5. Limitation of Liability</h2>
+        <p>To the maximum extent permitted by applicable law, TestMyDisplay and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages — including loss of profits, data, or goodwill — arising from your use of, or inability to use, the Service.</p>
+        <p>Our total liability for any claims under these Terms shall not exceed the amount you paid for the Service, which is zero (as the Service is free).</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>6. Intellectual Property</h2>
+        <p>The code, design, and written content of TestMyDisplay are owned by us unless otherwise noted. You may link to the Service freely. You may not reproduce substantial portions of the content without written permission.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>7. Third-Party Links</h2>
+        <p>The Service may contain links to external websites. We have no control over the content or privacy practices of these sites and accept no responsibility for them. Links to third-party sites do not imply endorsement.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>8. Modifications to Terms</h2>
+        <p>We reserve the right to modify these Terms at any time. Changes will be posted on this page with an updated "Last updated" date. Your continued use of the Service after changes are posted constitutes your acceptance of the revised Terms.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>9. Governing Law</h2>
+        <p>These Terms shall be governed by and construed in accordance with applicable laws. Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the appropriate courts.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>10. Contact</h2>
+        <p>Questions about these Terms? <a href="/contact" class="policy-link">Contact us</a> and we'll be happy to help.</p>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 48px 0 64px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+  .hero-eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: var(--font-display, "HUITSIDE", sans-serif);
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin: 0 0 24px;
+  }
+  .hero-sub {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text-body);
+    margin: 0 0 24px;
+  }
+  .last-updated {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 0.04em;
+  }
+
+  /* Policy body */
+  .policy-body {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+  .policy-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .policy-section p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0 0 14px;
+  }
+  .policy-section p:last-child {
+    margin-bottom: 0;
+  }
+  .policy-section ul {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0 0 14px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .policy-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .policy-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 32px 0 48px;
+    }
+  }
+</style>

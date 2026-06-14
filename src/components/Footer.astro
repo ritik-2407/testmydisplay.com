@@ -4,12 +4,10 @@ const year = new Date().getFullYear();
 const tests = [
   { label: 'Touch Screen Test', href: '/tests/touch' },
   { label: 'Dead Pixel Test', href: '/tests/dead-pixel' },
-  { label: 'Stuck Pixel Fixer', href: '/tests/stuck-pixel' },
   { label: 'Multi Touch Test', href: '/tests/multi-touch' },
   { label: 'Refresh Rate Test', href: '/tests/refresh-rate' },
-  { label: 'Color Accuracy Test', href: '/tests/color' },
-  { label: 'Brightness Test', href: '/tests/brightness' },
   { label: 'Backlight Bleed Test', href: '/tests/backlight-bleed' },
+  { label: 'Response Time Test', href: '/tests/response-time' },
 ];
 ---
 
@@ -28,28 +26,39 @@ const tests = [
 
     <div class="footer-col">
       <span class="footer-col-label">Tests</span>
-      {tests.slice(0, 4).map(t => (
+      {tests.slice(0, 3).map(t => (
         <a href={t.href} class="footer-link">{t.label}</a>
       ))}
     </div>
 
     <div class="footer-col">
       <span class="footer-col-label">More Tests</span>
-      {tests.slice(4).map(t => (
+      {tests.slice(3).map(t => (
         <a href={t.href} class="footer-link">{t.label}</a>
       ))}
     </div>
 
     <div class="footer-col">
-      <span class="footer-col-label">Resources</span>
-      <a href="/about" class="footer-link">About</a>
+      <span class="footer-col-label">Company</span>
+      <a href="/about" class="footer-link">About Us</a>
+      <a href="/contact" class="footer-link">Contact Us</a>
       <a href="/report" class="footer-link">Display Report</a>
+    </div>
+
+    <div class="footer-col">
+      <span class="footer-col-label">Legal</span>
+      <a href="/privacy" class="footer-link">Privacy Policy</a>
+      <a href="/terms" class="footer-link">Terms &amp; Conditions</a>
     </div>
   </div>
 
   <div class="footer-bottom">
     <p>© {year} testmydisplay.com — All rights reserved.</p>
-    <p>Not affiliated with any device manufacturer.</p>
+    <div class="footer-bottom-links">
+      <a href="/privacy" class="footer-bottom-link">Privacy Policy</a>
+      <span aria-hidden="true">·</span>
+      <a href="/terms" class="footer-bottom-link">Terms &amp; Conditions</a>
+    </div>
   </div>
 </footer>
 
@@ -65,7 +74,7 @@ const tests = [
     max-width: 1400px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
     gap: 48px;
   }
 
@@ -140,9 +149,27 @@ const tests = [
     color: var(--text-mute);
   }
 
-  @media (max-width: 900px) {
+  .footer-bottom-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text-mute);
+  }
+
+  .footer-bottom-link {
+    font-size: 12px;
+    color: var(--text-mute);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-bottom-link:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 1100px) {
     .footer-inner {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 2fr 1fr 1fr;
       gap: 32px;
     }
     .footer-brand {
@@ -150,7 +177,14 @@ const tests = [
     }
   }
 
-  @media (max-width: 600px) {
+  @media (max-width: 700px) {
+    .footer-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+  }
+
+  @media (max-width: 480px) {
     .footer-inner {
       grid-template-columns: 1fr;
     }

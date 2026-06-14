@@ -1,8 +1,27 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Dead Pixel Check — Free Dead Pixel Test Online",
+  "url": "https://testmydislay.com/tests/dead-pixel",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "description": "Free online dead pixel check. Cycle through solid color screens to instantly find dead or stuck pixels on any display — mobile, OLED, AMOLED, iPhone, or monitor.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+};
 ---
 
-<Layout title="Dead Pixel Test — Test My Display" description="Cycle through solid colors fullscreen to spot dead pixels on your display." noFooter={true}>
+<Layout
+  title="Dead Pixel Check — Free Dead Pixel Test Online | TestMyDisplay"
+  description="Free dead pixel check for any screen. Cycle through solid colors fullscreen to instantly spot dead or stuck pixels on your OLED, AMOLED, iPhone, or monitor display."
+  keywords="dead pixel check, dead pixel test, stuck pixel test, screen dead pixel, oled dead pixel test, monitor dead pixel test, display test"
+  canonical="https://testmydislay.com/tests/dead-pixel"
+  ogType="website"
+  jsonLd={jsonLd}
+  noFooter={true}
+>
   <!-- Instructions view -->
   <div class="page" id="instructions">
     <div class="page-inner">

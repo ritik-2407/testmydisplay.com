@@ -1,8 +1,27 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Backlight Bleed Test — Check IPS Glow & Bleed Online",
+  "url": "https://testmydislay.com/tests/backlight-bleed",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "description": "Free backlight bleed test online. Fill your screen with pure black to reveal backlight bleeding and IPS glow on LCD, VA, and IPS monitors and laptop screens.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+};
 ---
 
-<Layout title="Backlight Bleed Test — Test My Display" description="Check for backlight bleeding or IPS glow on your display in a dark room." noFooter={true}>
+<Layout
+  title="Backlight Bleed Test — Check IPS Glow & Bleed Online | TestMyDisplay"
+  description="Free backlight bleed test. Fill your screen with pure black to reveal light leaking from the edges of your LCD, IPS, or VA monitor. Works on all displays online."
+  keywords="backlight bleed test, ips glow test, monitor display test, screen display test, display test online, backlight bleeding, screen test"
+  canonical="https://testmydislay.com/tests/backlight-bleed"
+  ogType="website"
+  jsonLd={jsonLd}
+  noFooter={true}
+>
 
   <!-- ── Header bar (matches test-page pattern) ─────────────────────── -->
   <header class="test-header">

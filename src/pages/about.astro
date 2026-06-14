@@ -1,0 +1,251 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About TestMyDisplay",
+  "url": "https://testmydislay.com/about",
+  "description": "Learn about TestMyDisplay — a free, browser-based tool to test your display for dead pixels, touch, refresh rate, backlight bleed, and more.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "TestMyDisplay",
+    "url": "https://testmydislay.com"
+  }
+};
+---
+
+<Layout
+  title="About Us — TestMyDisplay"
+  description="Learn about TestMyDisplay — a free, privacy-first, browser-based display testing tool. No downloads, no ads, no data collection."
+  keywords="about testmydisplay, display test tool, free screen test, browser display test"
+  canonical="https://testmydislay.com/about"
+  jsonLd={jsonLd}
+>
+  <div class="page-wrap">
+    <section class="hero">
+      <div class="hero-eyebrow">About Us</div>
+      <h1 class="hero-title">Built for people who care<br/>about their display.</h1>
+      <p class="hero-sub">TestMyDisplay is a free, open, browser-based toolkit that helps you understand and verify the quality of any screen — phones, laptops, monitors, TVs.</p>
+    </section>
+
+    <section class="content-section">
+      <div class="two-col">
+        <div class="block">
+          <div class="block-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M10 2L12.39 7.26L18 8.18L14 12.08L14.9 17.66L10 15.13L5.1 17.66L6 12.08L2 8.18L7.61 7.26L10 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h2>What We Do</h2>
+          <p>We provide a growing suite of display diagnostics — completely free, right inside your browser. From dead-pixel detection to touch-screen accuracy, refresh rate measurement to backlight bleed checks, every test is designed to give you real, actionable results instantly.</p>
+        </div>
+        <div class="block">
+          <div class="block-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M10 6v4l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h2>Why We Built It</h2>
+          <p>Too many display-testing sites are bloated with ads, require downloads, or send your data somewhere. We wanted the opposite — something fast, private, and honest. Load the page, run the test, get the answer. Nothing else.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section values">
+      <h2 class="section-label">Our Principles</h2>
+      <div class="values-grid">
+        <div class="value-card">
+          <span class="value-num">01</span>
+          <h3>Zero data collection</h3>
+          <p>None of your test results, device specs, or interaction data ever leaves your browser. We don't have a backend to send it to.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-num">02</span>
+          <h3>No downloads, ever</h3>
+          <p>Every test runs natively in the browser using standard Web APIs. No extensions, no apps, no executables.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-num">03</span>
+          <h3>Works everywhere</h3>
+          <p>Whether you're on a 2013 Android phone, a Retina MacBook, or a 4K gaming monitor — all tests are designed to run anywhere.</p>
+        </div>
+        <div class="value-card">
+          <span class="value-num">04</span>
+          <h3>Always free</h3>
+          <p>No paywalls, no accounts, no premium tiers. The full suite is available to everyone, always.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section cta-section">
+      <h2>Ready to test your display?</h2>
+      <p>Start with any of our free tests — no sign-up required.</p>
+      <a href="/#tests" class="btn-primary">Browse all tests</a>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .page-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 48px 0 64px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 64px;
+  }
+  .hero-eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: var(--font-display, "HUITSIDE", sans-serif);
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin: 0 0 24px;
+  }
+  .hero-sub {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--text-body);
+    margin: 0;
+    max-width: 600px;
+  }
+
+  /* Content sections */
+  .content-section {
+    margin-bottom: 72px;
+  }
+
+  /* Two-col blocks */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .block {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .block-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--bg-soft-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .block h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 12px;
+    letter-spacing: -0.02em;
+  }
+  .block p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--text-body);
+    margin: 0;
+  }
+
+  /* Values */
+  .section-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin: 0 0 32px;
+    opacity: 0.8;
+  }
+  .values-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .value-card {
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-soft);
+    transition: border-color 0.15s ease;
+  }
+  .value-card:hover {
+    border-color: var(--accent);
+  }
+  .value-num {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 12px;
+    opacity: 0.7;
+  }
+  .value-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 10px;
+    letter-spacing: -0.015em;
+  }
+  .value-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-body);
+    margin: 0;
+  }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    padding: 56px 40px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+  .cta-section h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+  }
+  .cta-section p {
+    font-size: 15px;
+    color: var(--text-body);
+    margin: 0 0 28px;
+  }
+
+  @media (max-width: 640px) {
+    .two-col, .values-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero {
+      padding: 32px 0 48px;
+    }
+    .cta-section {
+      padding: 40px 24px;
+    }
+  }
+</style>

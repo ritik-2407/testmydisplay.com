@@ -1,8 +1,27 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Multi Touch Test — Test My Display Online",
+  "url": "https://testmydislay.com/tests/multi-touch",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "description": "Free multi-touch test online. Check how many simultaneous touch points your screen accurately tracks. Works on all phones, tablets, and touch-enabled displays.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+};
 ---
 
-<Layout title="Multi Touch Test — Test My Display" description="Test how many simultaneous touch points your screen can accurately track." noFooter={true}>
+<Layout
+  title="Multi Touch Test — How Many Touch Points Does Your Screen Support? | TestMyDisplay"
+  description="Free multi-touch screen test online. Measure how many simultaneous touch points your screen accurately tracks. Works on iPhone, Android, tablets, and any touch display."
+  keywords="multi touch test, touch screen test, screen test, mobile display test, iphone display test, display test online, multitouch test"
+  canonical="https://testmydislay.com/tests/multi-touch"
+  ogType="website"
+  jsonLd={jsonLd}
+  noFooter={true}
+>
   <div class="test-wrapper">
 
     <!-- Header bar -->

@@ -1,127 +1,269 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Refresh Rate Test — Monitor Display Test Online",
+  "url": "https://testmydislay.com/tests/refresh-rate",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "description": "Free refresh rate test online. Measure your monitor or phone display's actual refresh rate in Hz using precise frame-timing analysis. Works on all screens.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+};
 ---
 
-<Layout title="Refresh Rate Test — Test My Display" description="Measure your display's actual refresh rate using frame-timing analysis." noFooter={true}>
-  <div class="page">
-    <div class="page-inner">
+<Layout
+  title="Refresh Rate Test — Monitor & Screen Refresh Rate Test Online | TestMyDisplay"
+  description="Free refresh rate test online. Measure your monitor or phone display's actual refresh rate in Hz using frame-timing analysis. Test 60Hz, 120Hz, 144Hz & higher displays."
+  keywords="refresh rate test, monitor display test, screen refresh rate, display test online, 120hz test, 144hz test, oled display test, screen display test, display test"
+  canonical="https://testmydislay.com/tests/refresh-rate"
+  ogType="website"
+  jsonLd={jsonLd}
+  noFooter={true}
+>
+
+  <!-- ── Header bar ──────────────────────────────────────────────────── -->
+  <header class="test-header">
+    <div class="test-header-inner">
       <a href="/" class="back-link">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
         All Tests
       </a>
+      <div class="test-meta">
+        <h1 class="test-title">Refresh Rate Test</h1>
+      </div>
+      <div class="header-actions">
+        <button id="header-start-btn" class="btn-start">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true" id="header-play-icon"><path d="M3 2l9 5-9 5V2z" fill="currentColor"/></svg>
+          <span id="header-btn-label">Start</span>
+        </button>
+      </div>
+    </div>
+  </header>
 
-      <div class="content">
-        <div class="hero-stat">
+  <!-- ── Content area ────────────────────────────────────────────────── -->
+  <div class="content-area">
+    <div class="content-inner">
+
+      <!-- Hero FPS card -->
+      <div class="hero-card" id="hero-card">
+        <div class="ring-container">
+          <div class="ring-track"></div>
+          <div class="ring-pulse" id="ring-pulse"></div>
           <div class="fps-display">
             <span class="fps-value" id="fps-value">--</span>
             <span class="fps-unit">Hz</span>
           </div>
-          <div class="fps-label">Measured Refresh Rate</div>
         </div>
+        <div class="fps-label" id="fps-label">Ready to measure</div>
+        <div class="fps-status-dot" id="fps-status-dot"></div>
 
-        <!-- Chart -->
-        <div class="chart-wrapper">
-          <canvas id="fps-chart" height="120" aria-label="Refresh rate over time chart"></canvas>
-        </div>
-
-        <!-- Stats grid -->
-        <div class="stats-grid">
-          <div class="stats-card">
-            <div class="stats-card-label">Average</div>
-            <div class="stats-card-value" id="avg-fps">--</div>
+        <!-- Milestone tier strip -->
+        <div class="milestones">
+          <div class="milestone" data-hz="30" id="m-30">
+            <span class="milestone-hz">30</span>
+            <span class="milestone-label">Basic</span>
           </div>
-          <div class="stats-card">
-            <div class="stats-card-label">Min</div>
-            <div class="stats-card-value" id="min-fps">--</div>
+          <div class="milestone-sep"></div>
+          <div class="milestone" data-hz="60" id="m-60">
+            <span class="milestone-hz">60</span>
+            <span class="milestone-label">Standard</span>
           </div>
-          <div class="stats-card">
-            <div class="stats-card-label">Max</div>
-            <div class="stats-card-value" id="max-fps">--</div>
+          <div class="milestone-sep"></div>
+          <div class="milestone" data-hz="90" id="m-90">
+            <span class="milestone-hz">90</span>
+            <span class="milestone-label">Smooth</span>
           </div>
-          <div class="stats-card">
-            <div class="stats-card-label">Samples</div>
-            <div class="stats-card-value" id="sample-count">0</div>
+          <div class="milestone-sep"></div>
+          <div class="milestone" data-hz="120" id="m-120">
+            <span class="milestone-hz">120</span>
+            <span class="milestone-label">High</span>
           </div>
-        </div>
-
-        <!-- Controls -->
-        <div class="ctrl-row">
-          <button id="start-stop-btn" class="btn-primary-custom">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" id="play-icon"><path d="M4 2l8 5-8 5V2z" fill="currentColor"/></svg>
-            <span id="btn-label">Start Measuring</span>
-          </button>
-          <button id="reset-btn" class="btn-secondary-custom">Reset</button>
-        </div>
-
-        <!-- Info -->
-        <div class="info-box">
-          <h3 class="info-title">How it works</h3>
-          <p class="info-body">We use <code>requestAnimationFrame</code> to timestamp each rendered frame. By analyzing the intervals between frames over time, we calculate the actual refresh rate your GPU and display are delivering — which may differ from the spec if throttling or power-saving is active.</p>
-          <p class="info-body">For accurate results, run for at least 5 seconds with no other heavy activity on screen.</p>
+          <div class="milestone-sep"></div>
+          <div class="milestone" data-hz="144" id="m-144">
+            <span class="milestone-hz">144</span>
+            <span class="milestone-label">Gaming</span>
+          </div>
+          <div class="milestone-sep"></div>
+          <div class="milestone" data-hz="240" id="m-240">
+            <span class="milestone-hz">240</span>
+            <span class="milestone-label">Pro</span>
+          </div>
         </div>
       </div>
+
+      <!-- Chart card -->
+      <div class="chart-card">
+        <div class="chart-card-header">
+          <span class="chart-card-title">Live Frame Rate</span>
+          <span class="chart-badge" id="chart-badge">Waiting…</span>
+        </div>
+        <canvas id="fps-chart" height="110" aria-label="Refresh rate over time chart"></canvas>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot legend-line"></span>Measured Hz</span>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-grid">
+        <div class="stats-card">
+          <div class="stats-card-label">Average</div>
+          <div class="stats-card-value" id="avg-fps">--</div>
+          <div class="stats-card-unit">Hz</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-card-label">Min</div>
+          <div class="stats-card-value" id="min-fps">--</div>
+          <div class="stats-card-unit">Hz</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-card-label">Max</div>
+          <div class="stats-card-value" id="max-fps">--</div>
+          <div class="stats-card-unit">Hz</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-card-label">Samples</div>
+          <div class="stats-card-value" id="sample-count">0</div>
+          <div class="stats-card-unit">frames</div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="ctrl-row">
+        <button id="start-stop-btn" class="btn-primary-ctrl">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true" id="play-icon"><path d="M3 2l9 5-9 5V2z" fill="currentColor"/></svg>
+          <span id="btn-label">Start Measuring</span>
+        </button>
+        <button id="reset-btn" class="btn-secondary-ctrl">Reset</button>
+        <span class="ctrl-hint" id="ctrl-hint">Run for ≥ 5 s for accuracy</span>
+      </div>
+
+
     </div>
   </div>
+
 </Layout>
 
 <script>
-  const fpsEl = document.getElementById('fps-value')!;
-  const avgEl = document.getElementById('avg-fps')!;
-  const minEl = document.getElementById('min-fps')!;
-  const maxEl = document.getElementById('max-fps')!;
-  const sampleEl = document.getElementById('sample-count')!;
-  const startStopBtn = document.getElementById('start-stop-btn')!;
-  const resetBtn = document.getElementById('reset-btn')!;
-  const btnLabel = document.getElementById('btn-label')!;
-  const chart = document.getElementById('fps-chart') as HTMLCanvasElement;
+  /* ── Elements ── */
+  const fpsEl        = document.getElementById('fps-value')!;
+  const avgEl        = document.getElementById('avg-fps')!;
+  const minEl        = document.getElementById('min-fps')!;
+  const maxEl        = document.getElementById('max-fps')!;
+  const sampleEl     = document.getElementById('sample-count')!;
+  const fpsLabel     = document.getElementById('fps-label')!;
+  const ringPulse    = document.getElementById('ring-pulse')!;
+  const statusDot    = document.getElementById('fps-status-dot')!;
+  const heroCard     = document.getElementById('hero-card')!;
+  const chartBadge   = document.getElementById('chart-badge')!;
+  const ctrlHint     = document.getElementById('ctrl-hint')!;
 
-  let running = false;
+  /* main CTA */
+  const startStopBtn = document.getElementById('start-stop-btn')!;
+  const resetBtn     = document.getElementById('reset-btn')!;
+  const btnLabel     = document.getElementById('btn-label')!;
+  const playIcon     = document.getElementById('play-icon')!;
+
+  /* header CTA */
+  const headerBtn    = document.getElementById('header-start-btn')!;
+  const headerLabel  = document.getElementById('header-btn-label')!;
+  const headerIcon   = document.getElementById('header-play-icon')!;
+
+  const chart        = document.getElementById('fps-chart') as HTMLCanvasElement;
+
+  /* ── State ── */
+  let running      = false;
   let rafId: number | null = null;
   let lastTime: number | null = null;
   let fpsHistory: number[] = [];
   let sampleBuffer: number[] = [];
-  const HISTORY_SIZE = 60;
+  const HISTORY_SIZE = 80;
   let chartCtx: CanvasRenderingContext2D | null = null;
 
+  /* ── Milestone thresholds ── */
+  const MILESTONES = [30, 60, 90, 120, 144, 240];
+
+  /* ── Chart setup ── */
   function setup() {
     chart.width = chart.parentElement!.clientWidth;
     chartCtx = chart.getContext('2d');
   }
 
+  /* ── Read CSS var from :root ── */
+  function cssVar(name: string) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+
+  /* ── Colour-code FPS value ── */
+  function fpsColor(hz: number): string {
+    if (hz < 30)  return '#ef4444';
+    if (hz < 60)  return '#f59e0b';
+    if (hz < 90)  return cssVar('--text');
+    if (hz < 120) return cssVar('--accent');
+    return cssVar('--accent');
+  }
+
+  /* ── Update milestone badges ── */
+  function updateMilestones(hz: number) {
+    MILESTONES.forEach(m => {
+      const el = document.getElementById(`m-${m}`);
+      if (!el) return;
+      if (hz >= m) {
+        el.classList.add('milestone-active');
+      } else {
+        el.classList.remove('milestone-active');
+      }
+    });
+  }
+
+  /* ── Draw chart ── */
   function drawChart() {
     if (!chartCtx) return;
     const w = chart.width;
     const h = chart.height;
     chartCtx.clearRect(0, 0, w, h);
-
     if (fpsHistory.length < 2) return;
 
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const gridColor  = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.07)';
+    const labelColor = isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.30)';
+    const lineColor  = cssVar('--accent');
+    const fillColor  = isDark
+      ? 'rgba(170,220,50,0.08)'
+      : 'rgba(116,173,2,0.10)';
+
     const allVals = fpsHistory;
-    const minV = Math.max(0, Math.min(...allVals) - 10);
-    const maxV = Math.max(...allVals) + 10;
+    const minV = Math.max(0, Math.min(...allVals) - 15);
+    const maxV = Math.max(...allVals) + 15;
     const range = maxV - minV || 1;
 
-    // Grid lines
-    chartCtx.strokeStyle = '#f0f0f0';
-    chartCtx.lineWidth = 1;
+    /* grid lines at common Hz values */
+    chartCtx.font = '9px JetBrains Mono, monospace';
+    chartCtx.textAlign = 'left';
     [30, 60, 90, 120, 144, 165, 240].forEach(hz => {
       if (hz < minV || hz > maxV) return;
       const y = h - ((hz - minV) / range) * h;
+      chartCtx!.strokeStyle = gridColor;
+      chartCtx!.lineWidth = 1;
+      chartCtx!.setLineDash([4, 3]);
       chartCtx!.beginPath();
       chartCtx!.moveTo(0, y);
       chartCtx!.lineTo(w, y);
       chartCtx!.stroke();
-      chartCtx!.font = '10px JetBrains Mono, monospace';
-      chartCtx!.fillStyle = '#bbb';
-      chartCtx!.textAlign = 'left';
+      chartCtx!.setLineDash([]);
+      chartCtx!.fillStyle = labelColor;
       chartCtx!.fillText(`${hz}`, 4, y - 3);
     });
 
-    // Line
+    /* line + fill */
     chartCtx.beginPath();
-    chartCtx.strokeStyle = '#007cf0';
+    chartCtx.strokeStyle = lineColor;
     chartCtx.lineWidth = 2;
     chartCtx.lineJoin = 'round';
+    chartCtx.lineCap = 'round';
     allVals.forEach((v, i) => {
       const x = (i / (allVals.length - 1)) * w;
       const y = h - ((v - minV) / range) * h;
@@ -129,16 +271,34 @@ import Layout from '../../layouts/Layout.astro';
     });
     chartCtx.stroke();
 
-    // Fill
-    const lastX = w;
-    const lastY = h - ((allVals[allVals.length - 1] - minV) / range) * h;
-    chartCtx.lineTo(lastX, h);
+    /* gradient fill */
+    const grad = chartCtx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, fillColor);
+    grad.addColorStop(1, 'transparent');
+
+    chartCtx.beginPath();
+    allVals.forEach((v, i) => {
+      const x = (i / (allVals.length - 1)) * w;
+      const y = h - ((v - minV) / range) * h;
+      i === 0 ? chartCtx!.moveTo(x, y) : chartCtx!.lineTo(x, y);
+    });
+    chartCtx.lineTo(w, h);
     chartCtx.lineTo(0, h);
     chartCtx.closePath();
-    chartCtx.fillStyle = 'rgba(0, 124, 240, 0.08)';
+    chartCtx.fillStyle = grad;
+    chartCtx.fill();
+
+    /* latest-point dot */
+    const lastVal = allVals[allVals.length - 1];
+    const lx = w;
+    const ly = h - ((lastVal - minV) / range) * h;
+    chartCtx.beginPath();
+    chartCtx.arc(lx - 2, ly, 4, 0, Math.PI * 2);
+    chartCtx.fillStyle = lineColor;
     chartCtx.fill();
   }
 
+  /* ── RAF tick ── */
   function tick(timestamp: number) {
     if (!running) return;
     if (lastTime !== null) {
@@ -146,21 +306,25 @@ import Layout from '../../layouts/Layout.astro';
       const fps = 1000 / delta;
       if (fps > 1 && fps < 500) {
         sampleBuffer.push(fps);
-        // Average over 10 frames for stability
         if (sampleBuffer.length >= 10) {
           const avg = sampleBuffer.reduce((a, b) => a + b, 0) / sampleBuffer.length;
           const rounded = Math.round(avg);
+
           fpsEl.textContent = String(rounded);
+          fpsEl.style.color = fpsColor(rounded);
           fpsHistory.push(rounded);
           if (fpsHistory.length > HISTORY_SIZE) fpsHistory.shift();
           sampleBuffer = [];
 
           const all = fpsHistory;
-          avgEl.textContent = String(Math.round(all.reduce((a,b) => a+b,0)/all.length));
+          const computedAvg = Math.round(all.reduce((a, b) => a + b, 0) / all.length);
+          avgEl.textContent = String(computedAvg);
           minEl.textContent = String(Math.min(...all));
           maxEl.textContent = String(Math.max(...all));
           sampleEl.textContent = String(all.length);
 
+          chartBadge.textContent = `${rounded} Hz`;
+          updateMilestones(rounded);
           drawChart();
         }
       }
@@ -169,132 +333,467 @@ import Layout from '../../layouts/Layout.astro';
     rafId = requestAnimationFrame(tick);
   }
 
+  /* ── UI state helpers ── */
+  const STOP_ICON = `<rect x="3" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="8" y="2" width="3" height="10" rx="1" fill="currentColor"/>`;
+  const PLAY_ICON = `<path d="M3 2l9 5-9 5V2z" fill="currentColor"/>`;
+
+  function setRunning(on: boolean) {
+    running = on;
+    ringPulse.classList.toggle('ring-active', on);
+    statusDot.classList.toggle('dot-active', on);
+    heroCard.classList.toggle('card-measuring', on);
+
+    if (on) {
+      btnLabel.textContent = 'Stop';
+      playIcon.innerHTML = STOP_ICON;
+      headerLabel.textContent = 'Stop';
+      headerIcon.innerHTML = STOP_ICON;
+      fpsLabel.textContent = 'Measuring…';
+      ctrlHint.textContent = 'Run for ≥ 5 s for best accuracy';
+      startStopBtn.classList.add('btn-stop');
+      headerBtn.classList.add('btn-stop');
+    } else {
+      btnLabel.textContent = 'Start Measuring';
+      playIcon.innerHTML = PLAY_ICON;
+      headerLabel.textContent = 'Start';
+      headerIcon.innerHTML = PLAY_ICON;
+      fpsLabel.textContent = fpsHistory.length ? 'Measurement stopped' : 'Ready to measure';
+      ctrlHint.textContent = 'Run for ≥ 5 s for best accuracy';
+      startStopBtn.classList.remove('btn-stop');
+      headerBtn.classList.remove('btn-stop');
+    }
+  }
+
   function startStop() {
-    running = !running;
     if (running) {
+      cancelAnimationFrame(rafId!);
+      setRunning(false);
+    } else {
       lastTime = null;
       rafId = requestAnimationFrame(tick);
-      btnLabel.textContent = 'Stop';
-      startStopBtn.style.background = '#ee0000';
-    } else {
-      if (rafId) cancelAnimationFrame(rafId);
-      btnLabel.textContent = 'Start Measuring';
-      startStopBtn.style.background = '';
+      setRunning(true);
     }
   }
 
   function reset() {
-    running = false;
     if (rafId) cancelAnimationFrame(rafId);
     fpsHistory = [];
     sampleBuffer = [];
     lastTime = null;
     fpsEl.textContent = '--';
+    fpsEl.style.color = '';
     avgEl.textContent = '--';
     minEl.textContent = '--';
     maxEl.textContent = '--';
     sampleEl.textContent = '0';
-    btnLabel.textContent = 'Start Measuring';
-    startStopBtn.style.background = '';
+    chartBadge.textContent = 'Waiting…';
+    MILESTONES.forEach(m => document.getElementById(`m-${m}`)?.classList.remove('milestone-active'));
+    setRunning(false);
     if (chartCtx) chartCtx.clearRect(0, 0, chart.width, chart.height);
   }
 
   startStopBtn.addEventListener('click', startStop);
+  headerBtn.addEventListener('click', startStop);
   resetBtn.addEventListener('click', reset);
-  window.addEventListener('resize', () => {
-    setup();
-    drawChart();
-  });
-
+  window.addEventListener('resize', () => { setup(); drawChart(); });
   setup();
 </script>
 
 <style>
-  .page {
-    padding: 64px 24px;
-    min-height: calc(100vh - 64px - 280px);
+  /* ── Header ─────────────────────────────────────────────────────────── */
+  .test-header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 0 var(--border);
   }
 
-  .page-inner {
-    max-width: 680px;
+  .test-header-inner {
+    max-width: 860px;
     margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: 70px;
+    flex-wrap: wrap;
+    padding: 10px 0;
   }
 
   .back-link {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     font-size: 13px;
-    color: #4d4d4d;
+    color: var(--text-mute);
     text-decoration: none;
     padding: 6px 10px;
-    border-radius: 6px;
-    transition: background 0.15s;
-    margin-bottom: 32px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
   }
-  .back-link:hover { background: #f5f5f5; color: #171717; }
+  .back-link:hover { background: var(--bg-soft); color: var(--text); }
 
-  .content {
+  .test-meta { flex: 1; min-width: 0; }
+
+  .test-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.4px;
+  }
+
+  .test-subtitle {
+    font-size: 12px;
+    color: var(--text-mute);
+    margin: 2px 0 0;
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────────────────── */
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 0 18px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .btn-start:hover { background: var(--accent-hover); }
+  .btn-start.btn-stop { background: #ef4444; color: #fff; }
+  .btn-start.btn-stop:hover { background: #dc2626; }
+
+  .btn-primary-ctrl {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 22px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    font-family: inherit;
+  }
+  .btn-primary-ctrl:hover { background: var(--accent-hover); }
+  .btn-primary-ctrl.btn-stop { background: #ef4444; color: #fff; }
+  .btn-primary-ctrl.btn-stop:hover { background: #dc2626; }
+
+  .btn-secondary-ctrl {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    color: var(--text-body);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 18px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    font-family: inherit;
+    box-shadow: var(--card-shadow);
+  }
+  .btn-secondary-ctrl:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+    background: var(--bg-soft);
+  }
+
+  /* ── Content ─────────────────────────────────────────────────────────── */
+  .content-area {
+    padding: 40px 20px 60px;
+  }
+
+  .content-inner {
+    max-width: 860px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
   }
 
-  .hero-stat {
-    text-align: center;
-    padding: 40px 24px;
-    background: #fff;
-    border: 1px solid #ebebeb;
-    border-radius: 16px;
-    box-shadow: 0 0 0 1px #00000008 inset, 0px 2px 8px rgba(0,0,0,0.04);
+  /* ── Hero card ───────────────────────────────────────────────────────── */
+  .hero-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--card-shadow);
+    padding: 40px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-card.card-measuring {
+    border-color: var(--accent-border);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  /* faint radial glow behind the ring */
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 320px; height: 220px;
+    background: radial-gradient(ellipse at 50% 0%, var(--accent-dim) 0%, transparent 70%);
+    pointer-events: none;
+    transition: opacity 0.4s;
+    opacity: 0;
+  }
+  .hero-card.card-measuring::before { opacity: 1; }
+
+  /* ── Ring ─────────────────────────────────────────────────────────── */
+  .ring-container {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+
+  .ring-track,
+  .ring-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid transparent;
+  }
+
+  .ring-track {
+    border-color: var(--border);
+  }
+
+  .ring-pulse {
+    border-color: var(--accent);
+    opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: 0 0 0 0 var(--accent);
+  }
+
+  .ring-pulse.ring-active {
+    opacity: 1;
+    animation: ring-spin 1.8s linear infinite, ring-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes ring-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  @keyframes ring-glow {
+    0%, 100% { box-shadow: 0 0 0 0 var(--accent-border); }
+    50%       { box-shadow: 0 0 18px 4px var(--accent-dim); }
+  }
+
+  /* spinning ring arc using clip */
+  .ring-pulse.ring-active {
+    border-right-color: transparent;
+    border-bottom-color: transparent;
   }
 
   .fps-display {
     display: flex;
     align-items: flex-end;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 5px;
+    z-index: 1;
   }
 
   .fps-value {
-    font-size: 80px;
-    font-weight: 600;
-    color: #171717;
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--text);
     line-height: 1;
     letter-spacing: -4px;
     font-variant-numeric: tabular-nums;
-    transition: color 0.2s;
+    transition: color 0.3s;
+    font-family: var(--font-mono);
   }
 
   .fps-unit {
-    font-size: 28px;
+    font-size: 22px;
     font-weight: 500;
-    color: #888;
-    margin-bottom: 12px;
+    color: var(--text-mute);
+    margin-bottom: 10px;
+  }
+
+  /* ── Status row ───────────────────────────────────────────────────── */
+  .fps-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    transition: background 0.3s;
+  }
+  .fps-status-dot.dot-active {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+    animation: dot-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 0 2px var(--accent-dim); }
+    50%       { box-shadow: 0 0 0 5px transparent; }
   }
 
   .fps-label {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
-    color: #888;
+    color: var(--text-mute);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
+    margin-bottom: 24px;
   }
 
-  .chart-wrapper {
-    background: #fff;
-    border: 1px solid #ebebeb;
-    border-radius: 12px;
-    padding: 16px;
+  /* ── Milestones ───────────────────────────────────────────────────── */
+  .milestones {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .milestone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: background 0.2s, color 0.2s;
+    min-width: 56px;
+  }
+
+  .milestone-hz {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-mute);
+    letter-spacing: -0.5px;
+    transition: color 0.25s;
+  }
+
+  .milestone-label {
+    font-size: 10px;
+    color: var(--text-mute);
+    letter-spacing: 0.03em;
+    transition: color 0.25s;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+  }
+
+  .milestone.milestone-active .milestone-hz {
+    color: var(--accent);
+  }
+  .milestone.milestone-active .milestone-label {
+    color: var(--accent);
+    opacity: 0.75;
+  }
+  .milestone.milestone-active {
+    background: var(--accent-dim);
+  }
+
+  .milestone-sep {
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  /* ── Chart card ───────────────────────────────────────────────────── */
+  .chart-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow);
+    padding: 16px 16px 12px;
     overflow: hidden;
+  }
+
+  .chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .chart-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--font-mono);
+  }
+
+  .chart-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-full);
+    padding: 2px 10px;
+    letter-spacing: 0.03em;
   }
 
   #fps-chart {
     width: 100%;
     display: block;
+    border-radius: 6px;
   }
 
+  .chart-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-mute);
+    font-family: var(--font-mono);
+  }
+
+  .legend-dot {
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .legend-line { background: var(--accent); }
+
+  /* ── Stats grid ───────────────────────────────────────────────────── */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -302,104 +801,152 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   .stats-card {
-    background: #fff;
-    border: 1px solid #ebebeb;
-    border-radius: 10px;
-    padding: 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 14px 12px;
     text-align: center;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
   }
 
   .stats-card-label {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 10px;
-    color: #888;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--text-mute);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 4px;
+    letter-spacing: 0.07em;
   }
 
   .stats-card-value {
-    font-size: 22px;
-    font-weight: 600;
-    color: #171717;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
     font-variant-numeric: tabular-nums;
     letter-spacing: -0.5px;
+    font-family: var(--font-mono);
+    line-height: 1.1;
+    margin-top: 2px;
   }
 
+  .stats-card-unit {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Controls ─────────────────────────────────────────────────────── */
   .ctrl-row {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
+    flex-wrap: wrap;
   }
 
-  .btn-primary-custom {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: #171717;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 500;
-    padding: 0 20px;
-    height: 44px;
-    border-radius: 9999px;
-    border: none;
-    cursor: pointer;
-    transition: opacity 0.15s, background 0.2s;
+  .ctrl-hint {
+    font-size: 12px;
+    color: var(--text-mute);
+    font-family: var(--font-mono);
+    margin-left: 4px;
   }
-  .btn-primary-custom:hover { opacity: 0.85; }
 
-  .btn-secondary-custom {
-    display: inline-flex;
-    align-items: center;
-    background: #fff;
-    border: 1px solid #ebebeb;
-    color: #4d4d4d;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 0 16px;
-    height: 44px;
-    border-radius: 9999px;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
-  }
-  .btn-secondary-custom:hover { border-color: #a1a1a1; color: #171717; }
-
-  .info-box {
-    background: #fafafa;
-    border: 1px solid #ebebeb;
-    border-radius: 12px;
-    padding: 20px 24px;
+  /* ── Info card ────────────────────────────────────────────────────── */
+  .info-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
+    gap: 16px;
+  }
+
+  .info-card-header {
+    display: flex;
+    align-items: center;
     gap: 8px;
   }
 
-  .info-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #171717;
-    margin: 0;
+  .info-card-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
 
-  .info-body {
-    font-size: 14px;
-    line-height: 20px;
-    color: #4d4d4d;
+  .info-body-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .info-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .info-icon {
+    width: 30px;
+    height: 30px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .info-item strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .info-item p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-body);
     margin: 0;
   }
 
   code {
-    font-family: "JetBrains Mono", ui-monospace, monospace;
-    font-size: 12px;
-    background: #fff;
-    border: 1px solid #ebebeb;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
     border-radius: 4px;
     padding: 1px 5px;
+    color: var(--accent);
   }
 
-  @media (max-width: 500px) {
+  /* ── Responsive ───────────────────────────────────────────────────── */
+  @media (max-width: 640px) {
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
-    .fps-value { font-size: 60px; }
+    .fps-value { font-size: 60px; letter-spacing: -3px; }
+    .ring-container { width: 160px; height: 160px; }
+    .content-area { padding: 24px 14px 48px; }
+    .milestones { gap: 0; }
+    .milestone { padding: 6px 8px; min-width: 44px; }
+    .milestone-sep { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .test-subtitle { display: none; }
+    .ctrl-hint { display: none; }
+    .hero-card { padding: 28px 16px 20px; }
   }
 </style>

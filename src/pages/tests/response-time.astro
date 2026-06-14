@@ -1,0 +1,1234 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Response Time Test — Monitor & Display Test Online",
+  "url": "https://testmydislay.com/tests/response-time",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "description": "Free response time test online. Visually measure pixel response time and ghosting on your gaming monitor, OLED, or AMOLED display directly in your browser.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+};
+---
+
+<Layout
+  title="Response Time Test — Pixel Response & Ghosting Test Online | TestMyDisplay"
+  description="Free response time test online. Visually measure pixel response time and ghosting on your gaming monitor, OLED, AMOLED, or any display. No software needed."
+  keywords="response time test, monitor display test, pixel response time, ghosting test, oled display test, amoled display test, screen display test, display test online, display test"
+  canonical="https://testmydislay.com/tests/response-time"
+  ogType="website"
+  jsonLd={jsonLd}
+  noFooter={true}
+>
+
+  <!-- ── Header ──────────────────────────────────────────────────────── -->
+  <header class="test-header">
+    <div class="test-header-inner">
+      <a href="/" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        All Tests
+      </a>
+      <div class="test-meta">
+        <h1 class="test-title">Response Time Test</h1>
+      </div>
+      <div class="header-actions">
+        <button id="header-start-btn" class="btn-start">
+          <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true" id="header-play-icon">
+            <path d="M3 2l9 5-9 5V2z" fill="currentColor"/>
+          </svg>
+          <span id="header-btn-label">Start</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Content ─────────────────────────────────────────────────────── -->
+  <div class="content-area">
+    <div class="content-inner">
+
+      <!-- Hero canvas card -->
+      <div class="hero-card" id="hero-card">
+        <div class="hero-top">
+          <div class="hero-meta">
+            <div class="status-dot" id="status-dot"></div>
+            <span class="hero-label" id="hero-label">Ready to test</span>
+          </div>
+          <div class="hero-rt">
+            <span class="rt-value" id="rt-value">--</span>
+            <span class="rt-unit">ms / frame</span>
+          </div>
+        </div>
+        <canvas id="rt-canvas" height="210" aria-label="Response time motion test canvas"></canvas>
+        <p class="canvas-hint" id="canvas-hint">Watch for a smear or trailing ghost behind the moving object</p>
+      </div>
+
+      <!-- Controls card -->
+      <div class="controls-card">
+        <div class="ctrl-section ctrl-section-grow">
+          <span class="ctrl-label">Speed</span>
+          <div class="speed-wrap">
+            <input type="range" id="speed-slider" min="1" max="5" value="3" class="speed-range" aria-label="Object speed">
+            <div class="speed-ticks">
+              <span>Slow</span>
+              <span>Normal</span>
+              <span>Fast</span>
+              <span>Faster</span>
+              <span>Blazing</span>
+            </div>
+          </div>
+        </div>
+        <div class="ctrl-divider" aria-hidden="true"></div>
+        <div class="ctrl-section">
+          <span class="ctrl-label">Pattern</span>
+          <div class="toggle-group">
+            <button class="toggle-btn toggle-active" data-pattern="box">Box</button>
+            <button class="toggle-btn" data-pattern="chevron">Arrow</button>
+            <button class="toggle-btn" data-pattern="line">Line</button>
+          </div>
+        </div>
+        <div class="ctrl-divider" aria-hidden="true"></div>
+        <div class="ctrl-section">
+          <span class="ctrl-label">Background</span>
+          <div class="toggle-group">
+            <button class="toggle-btn toggle-active" data-bg="dark">Dark</button>
+            <button class="toggle-btn" data-bg="light">Light</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action row -->
+      <div class="ctrl-row">
+        <button id="start-stop-btn" class="btn-primary-ctrl">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true" id="play-icon">
+            <path d="M3 2l9 5-9 5V2z" fill="currentColor"/>
+          </svg>
+          <span id="btn-label">Start Test</span>
+        </button>
+        <button id="reset-btn" class="btn-secondary-ctrl">Reset</button>
+        <span class="ctrl-hint">Increase speed to make ghosting more visible</span>
+      </div>
+
+      <!-- Ghosting assessment -->
+      {/* <div class="assess-card">
+        <div class="assess-header">
+          <p class="assess-desc">How much trailing smear do you observe behind the moving object?</p>
+        </div>
+
+        <div class="rating-grid">
+          <button class="rating-btn" data-rating="none">
+            <div class="rating-dots">
+              <span class="rdot rdot-on"></span><span class="rdot"></span><span class="rdot"></span><span class="rdot"></span>
+            </div>
+            <strong>None</strong>
+            <span class="rating-sub">Clean, sharp edge</span>
+          </button>
+          <button class="rating-btn" data-rating="slight">
+            <div class="rating-dots">
+              <span class="rdot rdot-on"></span><span class="rdot rdot-on"></span><span class="rdot"></span><span class="rdot"></span>
+            </div>
+            <strong>Slight</strong>
+            <span class="rating-sub">Faint trail visible</span>
+          </button>
+          <button class="rating-btn" data-rating="moderate">
+            <div class="rating-dots">
+              <span class="rdot rdot-on"></span><span class="rdot rdot-on"></span><span class="rdot rdot-on"></span><span class="rdot"></span>
+            </div>
+            <strong>Moderate</strong>
+            <span class="rating-sub">Clear ghosting</span>
+          </button>
+          <button class="rating-btn" data-rating="heavy">
+            <div class="rating-dots">
+              <span class="rdot rdot-on"></span><span class="rdot rdot-on"></span><span class="rdot rdot-on"></span><span class="rdot rdot-on"></span>
+            </div>
+            <strong>Heavy</strong>
+            <span class="rating-sub">Long smear trail</span>
+          </button>
+        </div>
+
+        <!-- Result panel -->
+        <div class="result-panel" id="result-panel" hidden>
+          <div class="result-row">
+            <span class="result-range" id="result-range">--</span>
+            <div class="result-text">
+              <strong class="result-verdict" id="result-label">--</strong>
+              <span class="result-type" id="result-type">--</span>
+            </div>
+          </div>
+          <div class="tier-wrap">
+            <div class="tier-bar">
+              <div class="tier-seg tier-great"></div>
+              <div class="tier-seg tier-good"></div>
+              <div class="tier-seg tier-fair"></div>
+              <div class="tier-seg tier-slow"></div>
+            </div>
+            <div class="tier-marker" id="tier-marker"></div>
+            <div class="tier-labels">
+              <span>≤2ms</span>
+              <span>5ms</span>
+              <span>12ms</span>
+              <span>&gt;12ms</span>
+            </div>
+          </div>
+        </div>
+      </div> */}
+
+      <!-- Visual reference -->
+      <div class="ref-card">
+        <div class="ref-card-head">
+          <span class="info-card-label">Visual Reference</span>
+          <span class="ref-badge">Simulated</span>
+        </div>
+        <p class="ref-desc">Compare what you see above to these simulated ghosting levels. Your display's response time determines which one your test most closely resembles.</p>
+        <div class="ref-grid">
+          <div class="ref-item">
+            <canvas class="ref-canvas" id="ref-1ms" width="200" height="90" aria-label="1ms simulation"></canvas>
+            <div class="ref-info">
+              <strong class="ref-ms">≤ 1 ms</strong>
+              <span class="ref-type">OLED / TN</span>
+            </div>
+          </div>
+          <div class="ref-item">
+            <canvas class="ref-canvas" id="ref-4ms" width="200" height="90" aria-label="4ms simulation"></canvas>
+            <div class="ref-info">
+              <strong class="ref-ms">4 ms</strong>
+              <span class="ref-type">Fast IPS</span>
+            </div>
+          </div>
+          <div class="ref-item">
+            <canvas class="ref-canvas" id="ref-8ms" width="200" height="90" aria-label="8ms simulation"></canvas>
+            <div class="ref-info">
+              <strong class="ref-ms">8 ms</strong>
+              <span class="ref-type">Standard IPS</span>
+            </div>
+          </div>
+          <div class="ref-item">
+            <canvas class="ref-canvas" id="ref-16ms" width="200" height="90" aria-label="16ms simulation"></canvas>
+            <div class="ref-info">
+              <strong class="ref-ms">16 ms</strong>
+              <span class="ref-type">VA Panel</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info card -->
+      <div class="info-card">
+        <span class="info-card-label">How it works</span>
+        <div class="info-body-grid">
+          <div class="info-item">
+            <div class="info-icon">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="9" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M8 6v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6 1.5h4M8 1.5v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div>
+              <strong>What is response time?</strong>
+              <p>The time a pixel takes to shift from one colour to another (grey-to-grey, GTG). Faster panels produce less motion blur and trailing artefacts during fast-moving content.</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <rect x="2" y="2" width="5" height="12" rx="1.5" fill="currentColor" opacity="0.15" stroke="currentColor" stroke-width="1.5"/>
+                <rect x="9" y="2" width="5" height="12" rx="1.5" fill="currentColor" opacity="0.5" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div>
+              <strong>What causes ghosting?</strong>
+              <p>When a pixel hasn't fully transitioned by the time the next frame is rendered, it leaves a faint image of its previous state — the "ghost" trailing the moving object.</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M2 13l4-4 3 3 5-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <strong>Improve your results</strong>
+              <p>Many gaming monitors include an <strong>overdrive</strong> or <strong>response time</strong> setting (Normal / Fast / Fastest). Try adjusting it while the test is running to find the optimal level for your panel.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</Layout>
+
+<script>
+  /* ── Speed map (px per frame at ~60 Hz) ──────────────────────────────── */
+  const SPEED_PX_PER_FRAME = [3, 7, 13, 20, 28];
+
+  /* ── DOM refs ─────────────────────────────────────────────────────────── */
+  const canvas       = document.getElementById('rt-canvas')       as HTMLCanvasElement;
+  const ctx          = canvas.getContext('2d')!;
+  const speedSlider  = document.getElementById('speed-slider')    as HTMLInputElement;
+  const heroCard     = document.getElementById('hero-card')!;
+  const heroLabel    = document.getElementById('hero-label')!;
+  const rtValueEl    = document.getElementById('rt-value')!;
+  const statusDot    = document.getElementById('status-dot')!;
+  const canvasHint   = document.getElementById('canvas-hint')!;
+  const startStopBtn = document.getElementById('start-stop-btn')!;
+  const resetBtn     = document.getElementById('reset-btn')!;
+  const btnLabel     = document.getElementById('btn-label')!;
+  const playIcon     = document.getElementById('play-icon')!;
+  const headerBtn    = document.getElementById('header-start-btn')!;
+  const headerLabel  = document.getElementById('header-btn-label')!;
+  const headerIcon   = document.getElementById('header-play-icon')!;
+  const resultPanel  = document.getElementById('result-panel')    as HTMLElement;
+  const resultRange  = document.getElementById('result-range')!;
+  const resultLabel  = document.getElementById('result-label')!;
+  const resultType   = document.getElementById('result-type')!;
+  const tierMarker   = document.getElementById('tier-marker')!;
+
+  /* ── State ────────────────────────────────────────────────────────────── */
+  let running     = false;
+  let rafId: number | null = null;
+  let posX        = 0;
+  let startTime: number | null = null;
+  let lastTime: number | null  = null;
+  let frameBudget = 16.67;
+  let speedLevel  = 3;
+  let bgDark      = true;
+  let pattern: 'box' | 'chevron' | 'line' = 'box';
+
+  /* ── Canvas helpers ───────────────────────────────────────────────────── */
+  function resizeCanvas() {
+    canvas.width  = canvas.parentElement!.clientWidth;
+  }
+
+  function boxSize() {
+    return Math.max(38, Math.floor(canvas.height * 0.27));
+  }
+
+  function clearCanvas() {
+    ctx.fillStyle = bgDark ? '#0a0a0a' : '#f0f0f0';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  /* ── Animation loop ───────────────────────────────────────────────────── */
+  function draw(ts: number) {
+    if (!running) return;
+
+    if (lastTime !== null) {
+      const delta = ts - lastTime;
+      if (delta > 0 && delta < 250) {
+        frameBudget = frameBudget * 0.88 + delta * 0.12;
+      }
+    }
+    lastTime = ts;
+    if (startTime === null) startTime = ts;
+
+    const ppf = SPEED_PX_PER_FRAME[speedLevel - 1];
+    const w        = canvas.width;
+    const h        = canvas.height;
+    const bs       = boxSize();
+    const cy       = h / 2;
+
+    /* background */
+    ctx.fillStyle = bgDark ? '#0a0a0a' : '#f0f0f0';
+    ctx.fillRect(0, 0, w, h);
+
+    /* centre guide */
+    ctx.save();
+    ctx.strokeStyle = bgDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 5]);
+    ctx.beginPath();
+    ctx.moveTo(0, cy);
+    ctx.lineTo(w, cy);
+    ctx.stroke();
+    ctx.restore();
+
+    /* moving object */
+    ctx.fillStyle = bgDark ? '#ffffff' : '#111111';
+    switch (pattern) {
+      case 'box':
+        ctx.fillRect(posX - bs / 2, cy - bs / 2, bs, bs);
+        break;
+      case 'chevron':
+        ctx.beginPath();
+        ctx.moveTo(posX - bs * 0.28, cy - bs * 0.5);
+        ctx.lineTo(posX + bs * 0.44, cy);
+        ctx.lineTo(posX - bs * 0.28, cy + bs * 0.5);
+        ctx.lineTo(posX - bs * 0.62, cy);
+        ctx.closePath();
+        ctx.fill();
+        break;
+      case 'line':
+        ctx.fillRect(posX - 3, cy - bs * 0.65, 6, bs * 1.3);
+        break;
+    }
+
+    posX += ppf;
+    if (posX > w + bs) posX = -bs;
+
+    /* update hero frame-time display */
+    rtValueEl.textContent = frameBudget.toFixed(1);
+
+    rafId = requestAnimationFrame(draw);
+  }
+
+  /* ── UI state ─────────────────────────────────────────────────────────── */
+  const STOP_SVG = `<rect x="3" y="2" width="3" height="10" rx="1" fill="currentColor"/><rect x="8" y="2" width="3" height="10" rx="1" fill="currentColor"/>`;
+  const PLAY_SVG = `<path d="M3 2l9 5-9 5V2z" fill="currentColor"/>`;
+
+  function setRunningUI(on: boolean) {
+    statusDot.classList.toggle('dot-active', on);
+    heroCard.classList.toggle('card-running', on);
+    startStopBtn.classList.toggle('btn-stop', on);
+    headerBtn.classList.toggle('btn-stop', on);
+    if (on) {
+      btnLabel.textContent    = 'Stop Test';
+      playIcon.innerHTML      = STOP_SVG;
+      headerLabel.textContent = 'Stop';
+      headerIcon.innerHTML    = STOP_SVG;
+      heroLabel.textContent   = 'Testing…';
+      canvasHint.classList.add('hint-visible');
+    } else {
+      btnLabel.textContent    = 'Start Test';
+      playIcon.innerHTML      = PLAY_SVG;
+      headerLabel.textContent = 'Start';
+      headerIcon.innerHTML    = PLAY_SVG;
+    }
+  }
+
+  function startStop() {
+    if (running) {
+      cancelAnimationFrame(rafId!);
+      running = false;
+      setRunningUI(false);
+      heroLabel.textContent = 'Paused — rate ghosting below';
+    } else {
+      lastTime = null;
+      running  = true;
+      rafId    = requestAnimationFrame(draw);
+      setRunningUI(true);
+    }
+  }
+
+  function reset() {
+    if (rafId) cancelAnimationFrame(rafId);
+    running     = false;
+    posX        = 0;
+    startTime   = null;
+    lastTime    = null;
+    frameBudget = 16.67;
+    setRunningUI(false);
+    heroLabel.textContent  = 'Ready to test';
+    rtValueEl.textContent  = '--';
+    canvasHint.classList.remove('hint-visible');
+    resultPanel.hidden     = true;
+    document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('rating-active'));
+    clearCanvas();
+  }
+
+  /* ── Controls ─────────────────────────────────────────────────────────── */
+  startStopBtn.addEventListener('click', startStop);
+  headerBtn.addEventListener('click', startStop);
+  resetBtn.addEventListener('click', reset);
+
+  speedSlider.addEventListener('input', () => {
+    speedLevel = parseInt(speedSlider.value, 10);
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-pattern]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-pattern]').forEach(b => b.classList.remove('toggle-active'));
+      btn.classList.add('toggle-active');
+      pattern = btn.dataset.pattern as 'box' | 'chevron' | 'line';
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-bg]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-bg]').forEach(b => b.classList.remove('toggle-active'));
+      btn.classList.add('toggle-active');
+      bgDark = btn.dataset.bg === 'dark';
+      if (!running) clearCanvas();
+    });
+  });
+
+  /* ── Rating ───────────────────────────────────────────────────────────── */
+  type Rating = 'none' | 'slight' | 'moderate' | 'heavy';
+  const RATINGS: Record<Rating, { range: string; label: string; type: string; pos: string; color: string }> = {
+    none:     { range: '≤ 2 ms',    label: 'Excellent', type: 'OLED / TN / High-end Gaming', pos: '10%', color: '#22c55e' },
+    slight:   { range: '2 – 5 ms',  label: 'Good',      type: 'Fast IPS / Premium Gaming',   pos: '30%', color: '#84cc16' },
+    moderate: { range: '5 – 12 ms', label: 'Average',   type: 'Standard IPS',                 pos: '60%', color: '#f59e0b' },
+    heavy:    { range: '> 12 ms',   label: 'Slow',      type: 'VA Panel / Entry-level IPS',   pos: '88%', color: '#ef4444' },
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('.rating-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('rating-active'));
+      btn.classList.add('rating-active');
+      const r = RATINGS[btn.dataset.rating as Rating];
+      resultRange.textContent      = r.range;
+      resultRange.style.color      = r.color;
+      resultLabel.textContent      = r.label;
+      resultType.textContent       = r.type;
+      tierMarker.style.left        = r.pos;
+      tierMarker.style.background  = r.color;
+      tierMarker.style.boxShadow   = `0 0 0 3px ${r.color}33`;
+      resultPanel.hidden = false;
+    });
+  });
+
+  /* ── Reference canvases ───────────────────────────────────────────────── */
+  type GhostDef = Array<{ offset: number; opacity: number }>;
+  const GHOST_CONFIGS: Record<number, GhostDef> = {
+    1:  [],
+    4:  [{ offset: -32, opacity: 0.22 }],
+    8:  [{ offset: -32, opacity: 0.42 }, { offset: -64, opacity: 0.15 }],
+    16: [{ offset: -32, opacity: 0.58 }, { offset: -64, opacity: 0.32 }, { offset: -96, opacity: 0.13 }, { offset: -128, opacity: 0.04 }],
+  };
+
+  function drawRefCanvas(el: HTMLCanvasElement, ms: number) {
+    const c   = el.getContext('2d')!;
+    const w   = el.width;
+    const h   = el.height;
+    const bw  = 22;
+    const bh  = 30;
+    const ox  = w * 0.68;
+    const oy  = h / 2;
+
+    c.fillStyle = '#0d0d0d';
+    c.fillRect(0, 0, w, h);
+
+    c.save();
+    c.strokeStyle = 'rgba(255,255,255,0.06)';
+    c.lineWidth = 1;
+    c.setLineDash([4, 3]);
+    c.beginPath(); c.moveTo(0, oy); c.lineTo(w, oy); c.stroke();
+    c.restore();
+
+    for (const g of (GHOST_CONFIGS[ms] ?? [])) {
+      c.fillStyle = `rgba(255,255,255,${g.opacity})`;
+      c.fillRect(ox + g.offset - bw / 2, oy - bh / 2, bw, bh);
+    }
+
+    c.fillStyle = '#ffffff';
+    c.fillRect(ox - bw / 2, oy - bh / 2, bw, bh);
+  }
+
+  [1, 4, 8, 16].forEach(ms => {
+    const el = document.getElementById(`ref-${ms}ms`) as HTMLCanvasElement | null;
+    if (el) drawRefCanvas(el, ms);
+  });
+
+  /* ── Resize & init ────────────────────────────────────────────────────── */
+  window.addEventListener('resize', () => {
+    resizeCanvas();
+    if (!running) clearCanvas();
+  });
+
+  resizeCanvas();
+  clearCanvas();
+</script>
+
+<style>
+  /* ── Header ──────────────────────────────────────────────────────────── */
+  .test-header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 0 var(--border);
+  }
+
+  .test-header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    min-height: 70px;
+    flex-wrap: wrap;
+    padding: 10px 0;
+  }
+
+  .back-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: var(--text-mute);
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .back-link:hover { background: var(--bg-soft); color: var(--text); }
+
+  .test-meta { flex: 1; min-width: 0; }
+
+  .test-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.4px;
+  }
+
+  .header-actions { flex-shrink: 0; }
+
+  /* ── Buttons ─────────────────────────────────────────────────────────── */
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 0 18px;
+    height: 38px;
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .btn-start:hover { background: var(--accent-hover); }
+  .btn-start.btn-stop { background: #ef4444; color: #fff; }
+  .btn-start.btn-stop:hover { background: #dc2626; }
+
+  .btn-primary-ctrl {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: var(--accent-text);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 22px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s;
+    font-family: inherit;
+  }
+  .btn-primary-ctrl:hover { background: var(--accent-hover); }
+  .btn-primary-ctrl.btn-stop { background: #ef4444; color: #fff; }
+  .btn-primary-ctrl.btn-stop:hover { background: #dc2626; }
+
+  .btn-secondary-ctrl {
+    display: inline-flex;
+    align-items: center;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    color: var(--text-body);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 0 18px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    font-family: inherit;
+    box-shadow: var(--card-shadow);
+  }
+  .btn-secondary-ctrl:hover {
+    border-color: var(--border-strong);
+    color: var(--text);
+    background: var(--bg-soft);
+  }
+
+  /* ── Layout ──────────────────────────────────────────────────────────── */
+  .content-area { padding: 40px 20px 60px; }
+
+  .content-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ── Hero card ───────────────────────────────────────────────────────── */
+  .hero-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--card-shadow);
+    padding: 18px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-card.card-running {
+    border-color: var(--accent-border);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .hero-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 80%; height: 120px;
+    background: radial-gradient(ellipse at 50% 0%, var(--accent-dim) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+    z-index: 0;
+  }
+  .hero-card.card-running::before { opacity: 1; }
+
+  /* top info bar */
+  .hero-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .status-dot.dot-active {
+    background: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+    animation: dot-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 0 2px var(--accent-dim); }
+    50%       { box-shadow: 0 0 0 5px transparent; }
+  }
+
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .hero-rt {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+  }
+
+  .rt-value {
+    font-family: var(--font-mono);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -1px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.2s;
+  }
+
+  .rt-unit {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-mute);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  /* canvas */
+  #rt-canvas {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .canvas-hint {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-mute);
+    text-align: center;
+    letter-spacing: 0.03em;
+    margin: 10px 0 0;
+    opacity: 0;
+    transition: opacity 0.4s;
+    position: relative;
+    z-index: 1;
+  }
+  .canvas-hint.hint-visible { opacity: 1; }
+
+  /* ── Controls card ───────────────────────────────────────────────────── */
+  .controls-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--card-shadow);
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 20px 0 0;
+  }
+
+  .ctrl-section-grow { flex: 1; min-width: 200px; }
+
+  .ctrl-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .ctrl-divider {
+    width: 1px;
+    background: var(--border);
+    align-self: stretch;
+    margin: 0 20px 0 0;
+    flex-shrink: 0;
+  }
+
+  /* speed slider */
+  .speed-wrap { display: flex; flex-direction: column; gap: 6px; }
+
+  .speed-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  .speed-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1.5px var(--accent-border);
+  }
+  .speed-range::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1.5px var(--accent-border);
+  }
+
+  .speed-ticks {
+    display: flex;
+    justify-content: space-between;
+  }
+  .speed-ticks span {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* toggle buttons */
+  .toggle-group { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-soft);
+    border: 1.5px solid var(--border);
+    color: var(--text-mute);
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .toggle-btn:hover { color: var(--text); border-color: var(--border-strong); background: var(--bg); }
+  .toggle-btn.toggle-active {
+    background: var(--accent-dim);
+    border-color: var(--accent-border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ── Action row ───────────────────────────────────────────────────────── */
+  .ctrl-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-hint {
+    font-size: 12px;
+    color: var(--text-mute);
+    font-family: var(--font-mono);
+    margin-left: 4px;
+  }
+
+  /* ── Assessment card ─────────────────────────────────────────────────── */
+  .assess-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .assess-header { display: flex; flex-direction: column; gap: 6px; }
+
+  .assess-desc {
+    font-size: 13px;
+    color: var(--text-body);
+    margin: 0;
+    line-height: 1.6;
+  }
+  .assess-desc strong { color: var(--text); font-weight: 600; }
+
+  .rating-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .rating-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 14px 14px 12px;
+    background: var(--bg-soft);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: inherit;
+    text-align: left;
+  }
+  .rating-btn:hover {
+    border-color: var(--border-strong);
+    background: var(--bg);
+  }
+  .rating-btn.rating-active {
+    background: var(--accent-dim);
+    border-color: var(--accent-border);
+  }
+
+  /* rating dots */
+  .rating-dots { display: flex; gap: 4px; align-items: center; margin-bottom: 2px; }
+  .rdot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .rdot.rdot-on { background: var(--text-mute); }
+  .rating-btn.rating-active .rdot.rdot-on { background: var(--accent); }
+  .rating-btn.rating-active .rdot { background: var(--accent-border); }
+
+  .rating-btn strong {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+    line-height: 1;
+  }
+  .rating-btn.rating-active strong { color: var(--accent); }
+
+  .rating-sub {
+    font-size: 11px;
+    color: var(--text-mute);
+    line-height: 1.4;
+    font-family: var(--font-mono);
+  }
+
+  /* ── Result panel ────────────────────────────────────────────────────── */
+  .result-panel {
+    background: var(--bg-soft);
+    border: 1.5px solid var(--accent-border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    animation: slide-in 0.25s ease;
+  }
+
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .result-range {
+    font-family: var(--font-mono);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+    transition: color 0.3s;
+  }
+
+  .result-text { display: flex; flex-direction: column; gap: 3px; }
+
+  .result-verdict {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .result-type {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* tier bar */
+  .tier-wrap { position: relative; padding-bottom: 22px; }
+
+  .tier-bar {
+    display: flex;
+    height: 8px;
+    gap: 2px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .tier-seg { height: 100%; }
+  .tier-great { background: #22c55e; flex: 1; }
+  .tier-good  { background: #84cc16; flex: 1; }
+  .tier-fair  { background: #f59e0b; flex: 1.5; }
+  .tier-slow  { background: #ef4444; flex: 1.5; }
+
+  .tier-marker {
+    position: absolute;
+    top: -4px;
+    left: 10%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2.5px solid var(--bg);
+    transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, box-shadow 0.3s;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .tier-labels {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+  }
+  .tier-labels span {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Reference card ──────────────────────────────────────────────────── */
+  .ref-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .ref-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ref-badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    color: var(--text-mute);
+    border-radius: var(--radius-full);
+    padding: 2px 9px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .ref-desc {
+    font-size: 13px;
+    color: var(--text-body);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .ref-item { display: flex; flex-direction: column; gap: 8px; }
+
+  .ref-canvas {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #0d0d0d;
+  }
+
+  .ref-info { display: flex; flex-direction: column; gap: 2px; }
+
+  .ref-ms {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+  }
+
+  .ref-type {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Info card ───────────────────────────────────────────────────────── */
+  .info-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .info-card-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+  }
+
+  .info-body-grid { display: flex; flex-direction: column; gap: 14px; }
+
+  .info-item { display: flex; gap: 12px; align-items: flex-start; }
+
+  .info-icon {
+    width: 30px;
+    height: 30px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .info-item strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .info-item p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-body);
+    margin: 0;
+  }
+
+  .info-item p strong { display: inline; font-weight: 600; color: var(--text); margin-bottom: 0; }
+
+  /* ── Responsive ──────────────────────────────────────────────────────── */
+  @media (max-width: 700px) {
+    .test-header { padding: 0 14px; }
+    .content-area { padding: 24px 14px 48px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .rating-grid { grid-template-columns: repeat(2, 1fr); }
+    .ref-grid { grid-template-columns: repeat(2, 1fr); }
+    .controls-card { flex-direction: column; }
+    .ctrl-divider { width: 100%; height: 1px; margin: 4px 0; }
+    .ctrl-section { padding: 0; width: 100%; }
+    .ctrl-hint { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .rating-grid { grid-template-columns: repeat(2, 1fr); }
+    .ref-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero-card { padding: 14px 16px 12px; }
+    .velocity-value { font-size: 20px; }
+  }
+</style>

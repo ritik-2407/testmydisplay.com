@@ -1,0 +1,182 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const lastUpdated = 'June 14, 2026';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Privacy Policy — TestMyDisplay",
+  "url": "https://testmydislay.com/privacy",
+  "description": "Privacy Policy for TestMyDisplay. We collect no personal data. All tests run locally in your browser.",
+  "dateModified": "2026-06-14"
+};
+---
+
+<Layout
+  title="Privacy Policy — TestMyDisplay"
+  description="TestMyDisplay Privacy Policy. We collect zero personal data. All display tests run entirely in your browser — nothing is ever sent to our servers."
+  keywords="testmydisplay privacy policy, display test privacy, no data collection screen test"
+  canonical="https://testmydislay.com/privacy"
+  jsonLd={jsonLd}
+>
+  <div class="page-wrap">
+    <section class="hero">
+      <div class="hero-eyebrow">Privacy Policy</div>
+      <h1 class="hero-title">We collect nothing.<br/>Full stop.</h1>
+      <p class="hero-sub">TestMyDisplay is designed from the ground up to work entirely inside your browser. No account. No tracking. No servers receiving your data.</p>
+      <div class="last-updated">Last updated: {lastUpdated}</div>
+    </section>
+
+    <div class="policy-body">
+      <section class="policy-section">
+        <h2>1. Information We Collect</h2>
+        <p>We do not collect, store, or transmit any personally identifiable information (PII). Specifically:</p>
+        <ul>
+          <li>We do not collect your name, email address, or any contact information.</li>
+          <li>We do not collect your device specifications, screen resolution, or hardware details.</li>
+          <li>We do not collect your test results or interaction data.</li>
+          <li>We do not use cookies for tracking or analytics purposes.</li>
+          <li>We do not run third-party analytics (e.g. Google Analytics, Mixpanel, Hotjar).</li>
+        </ul>
+        <p>The only data stored on your device is your theme preference (light or dark mode), saved to <code>localStorage</code>. This never leaves your browser.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>2. How Our Tests Work</h2>
+        <p>All display tests — dead pixel detection, touch screen tests, refresh rate measurement, backlight bleed checks, and response time tests — run entirely using standard browser APIs (Web APIs). The processing happens locally on your device. No test data is transmitted over the network.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>3. Third-Party Services</h2>
+        <p>TestMyDisplay uses the following third-party services that may collect limited, anonymized data:</p>
+        <ul>
+          <li><strong>Google Fonts</strong> — We load Inter and JetBrains Mono from Google's CDN. Google may collect anonymized usage statistics per their <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="policy-link">privacy policy</a>.</li>
+          <li><strong>CDN Fonts</strong> — We load display fonts from cdnfonts.com. Usage may be logged per their policies.</li>
+        </ul>
+        <p>No advertising networks, analytics SDKs, or tracking pixels are loaded on this site.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>4. Hosting and Server Logs</h2>
+        <p>Our hosting provider may collect standard web server logs (IP address, timestamp, page visited, referrer, user agent) as part of normal server operations. These logs are used solely for infrastructure purposes and are not used to identify individual users. They are retained for a short period and automatically deleted.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>5. Children's Privacy</h2>
+        <p>TestMyDisplay does not knowingly collect information from children under 13. Because we collect no personal data at all, the service is safe for users of all ages.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>6. Changes to This Policy</h2>
+        <p>If we ever change our privacy practices, we will update this page and revise the "Last updated" date above. We will not change our practices in a way that is less protective of user privacy without clear notice.</p>
+      </section>
+
+      <section class="policy-section">
+        <h2>7. Contact</h2>
+        <p>Questions about this privacy policy? <a href="/contact" class="policy-link">Contact us</a> and we'll respond promptly.</p>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .page-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 48px 0 64px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 56px;
+  }
+  .hero-eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero-title {
+    font-family: var(--font-display, "HUITSIDE", sans-serif);
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin: 0 0 24px;
+  }
+  .hero-sub {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--text-body);
+    margin: 0 0 24px;
+  }
+  .last-updated {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--text-mute);
+    letter-spacing: 0.04em;
+  }
+
+  /* Policy body */
+  .policy-body {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+  }
+  .policy-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .policy-section p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0 0 14px;
+  }
+  .policy-section p:last-child {
+    margin-bottom: 0;
+  }
+  .policy-section ul {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0 0 14px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .policy-section code {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+    background: var(--bg-soft-2);
+    padding: 1px 6px;
+    border-radius: 5px;
+    color: var(--text);
+  }
+  .policy-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .policy-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 32px 0 48px;
+    }
+  }
+</style>

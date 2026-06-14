@@ -1,8 +1,27 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Touch Screen Test — Free Online Screen Test",
+  "url": "https://testmydislay.com/tests/touch",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "All",
+  "description": "Free online touch screen test. Slide your finger to check every zone of your touchscreen — works on iPhone, Android, tablet, and any touch-enabled display.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+};
 ---
 
-<Layout title="Touch Screen Test — Test My Display" description="Test your touchscreen by sliding over every grid zone. Instantly see which areas respond and which don't." fullscreen={true}>
+<Layout
+  title="Touch Screen Test — Free Online Screen Test | TestMyDisplay"
+  description="Free touch screen test. Slide your finger across every zone to instantly see which areas of your display respond and which don't. Works on iPhone, Android, tablets & more."
+  keywords="touch screen test, screen test, mobile display test, iphone display test, touch screen check, display test online, touchscreen test"
+  canonical="https://testmydislay.com/tests/touch"
+  ogType="website"
+  jsonLd={jsonLd}
+  fullscreen={true}
+>
   <div class="touch-wrapper" id="touch-wrapper">
     <!-- Touch Grid -->
     <div class="touch-area" id="touch-area" aria-label="Touch test grid">

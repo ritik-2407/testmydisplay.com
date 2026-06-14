@@ -2,13 +2,42 @@
 import Layout from '../layouts/Layout.astro';
 import TestCard from '../components/TestCard.astro';
 
+const seoTitle = 'Display Test — Free Online Display Test Tool | TestMyDisplay';
+const seoDescription = 'Run a free online display test right in your browser. Check dead pixels, touch screen accuracy, refresh rate, backlight bleed & more. Works on mobile, OLED, AMOLED, iPhone, and all monitors.';
+const seoKeywords = 'display test, display test online, screen test, monitor display test, mobile display test, oled display test, amoled display test, iphone display test, color display test, screen display test, touch screen test, oled screen test, dead pixel check, backlight bleed test, refresh rate test, response time test';
+
+const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "TestMyDisplay",
+  "url": "https://testmydislay.com",
+  "description": seoDescription,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://testmydislay.com/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+};
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Display Tests",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Touch Screen Test", "url": "https://testmydislay.com/tests/touch" },
+    { "@type": "ListItem", "position": 2, "name": "Dead Pixel Check", "url": "https://testmydislay.com/tests/dead-pixel" },
+    { "@type": "ListItem", "position": 3, "name": "Refresh Rate Test", "url": "https://testmydislay.com/tests/refresh-rate" },
+    { "@type": "ListItem", "position": 4, "name": "Backlight Bleed Test", "url": "https://testmydislay.com/tests/backlight-bleed" },
+    { "@type": "ListItem", "position": 5, "name": "Response Time Test", "url": "https://testmydislay.com/tests/response-time" },
+    { "@type": "ListItem", "position": 6, "name": "Multi Touch Test", "url": "https://testmydislay.com/tests/multi-touch" }
+  ]
+};
+
 const touchIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5V8a2.5 2.5 0 0 0 5 0v6.5"/><path d="M7 14.5h10a5 2 0 0 1-10 0z"/></svg>`;
 const deadPixelIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><rect x="10" y="8" width="4" height="4" rx="0.5" fill="currentColor" stroke="none"/></svg>`;
-const stuckPixelIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 12-8.5 8.5a2.12 2.12 0 0 1-3-3L12 9"/><path d="m21.5 11.5-1.91-1.91A2 2 0 0 1 19 8.17V7l-2.26-2.26a6 6 0 0 0-4.2-1.76L9 2.96l.92.82A6.18 6.18 0 0 1 12 8.4V10l2 2h1.17a2 2 0 0 1 1.42.59L18.5 14"/></svg>`;
 const multiTouchIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><circle cx="12" cy="17" r="2.5"/><path d="M7 9.5v3M17 9.5v3M12 14.5v-3"/></svg>`;
 const refreshRateIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="12" r="3"/><path d="M3 8h7M3 12h5M3 16h7"/></svg>`;
-const colorIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="2"/><path d="M20 4L12 12"/></svg>`;
-const brightnessIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>`;
+const responseTimeIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M9 2h6M12 2v2.5"/><path d="M19.5 5l1-1"/></svg>`;
 const backlightIcon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l6.5 9a7.5 7.5 0 1 1-13 0L12 3z"/></svg>`;
 
 
@@ -45,31 +74,23 @@ const tests = [
     icon: refreshRateIcon,
   },
   {
-    title: 'Color Accuracy Test',
-    description: 'Check gradients, primary and secondary colors, and color banding.',
-    href: '/tests/color',
-    icon: colorIcon,
+    title: 'Response Time Test',
+    description: 'Visually measure pixel response time and ghosting on your display.',
+    href: '/tests/response-time',
+    icon: responseTimeIcon,
   },
-  {
-    title: 'Stuck Pixel Fixer',
-    description: 'Rapidly flash colors at high frequency to coax stuck pixels back to life.',
-    href: '/tests/stuck-pixel',
-    icon: stuckPixelIcon,
-  },
-  
-  
-  
-  {
-    title: 'Brightness Test',
-    description: 'Test your display\'s brightness uniformity and black-level performance.',
-    href: '/tests/brightness',
-    icon: brightnessIcon,
-  },
-  
 ];
 ---
 
-<Layout title="Test My Display — Free Display Health Tools" bodyClass="home-page">
+<Layout
+  title={seoTitle}
+  description={seoDescription}
+  keywords={seoKeywords}
+  ogType="website"
+  canonical="https://testmydislay.com/"
+  jsonLd={[homeJsonLd, breadcrumbJsonLd]}
+  bodyClass="home-page"
+>
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-inner">
@@ -181,7 +202,259 @@ const tests = [
       </div>
     </div>
   </section>
+
+  <!-- SEO Article Section -->
+  <section class="seo-article-section" aria-label="About TestMyDisplay">
+    <div class="seo-article-inner">
+      <article class="seo-article">
+        <h2 class="seo-article-title">The Complete Free Display Test Tool — Test Any Screen Online</h2>
+
+        <p>
+          Whether you just unboxed a brand-new monitor, picked up a refurbished phone, or simply want to verify
+          that your screen is performing at its best, <strong>TestMyDisplay</strong> gives you everything you need
+          in one place. Our free, browser-based <strong>display test</strong> suite runs entirely on your device —
+          no downloads, no sign-ups, no data ever leaves your browser.
+        </p>
+
+        <h3>What Is a Display Test?</h3>
+        <p>
+          A display test is a structured way to check that every part of your screen — pixels, touch layer,
+          backlight, refresh timing, and color rendering — is working correctly. Screens degrade, develop
+          defects, or ship from the factory with flaws that only become apparent under specific test conditions.
+          Running a quick <strong>screen test</strong> takes less than five minutes and can save you from
+          accepting a defective device or missing a warranty claim window.
+        </p>
+
+        <h3>Who Should Use This Online Display Test?</h3>
+        <p>
+          Our <strong>display test online</strong> tool is built for everyone. Smartphone buyers can run
+          a <strong>mobile display test</strong> to verify OLED uniformity and touch accuracy straight out of
+          the box. PC gamers and content creators can use the <strong>monitor display test</strong> to confirm
+          their panel's true refresh rate and check for IPS glow or backlight bleed. Owners of premium
+          handsets can perform an <strong>iPhone display test</strong> or <strong>AMOLED display test</strong>
+          to ensure perfect pixel-level quality on their Super Retina or Galaxy screen.
+        </p>
+
+        <h3>Tests Available on TestMyDisplay</h3>
+        <p>Here is a breakdown of every tool available and what it checks:</p>
+        <ul>
+          <li>
+            <strong>Dead Pixel Check</strong> — Cycles your entire screen through solid red, green, blue, white,
+            and black fills. Any pixel that fails to change color is immediately visible, making this the
+            fastest way to find dead or stuck pixels on any display type.
+          </li>
+          <li>
+            <strong>Touch Screen Test</strong> — Divides your touchscreen into a fine grid and lights up
+            each zone as you slide your finger across it. Ideal for <strong>screen display test</strong>
+            after a screen repair or when buying a second-hand device.
+          </li>
+          <li>
+            <strong>Multi-Touch Test</strong> — Measures the number of simultaneous touch points your
+            digitizer accurately registers. Most modern phones support 5–10 points; this test tells you
+            your actual hardware limit.
+          </li>
+          <li>
+            <strong>Refresh Rate Test</strong> — Uses frame-timing analysis to measure your display's
+            real-world refresh rate in Hz. Essential for verifying whether your 120 Hz or 144 Hz monitor
+            is actually running at its rated speed.
+          </li>
+          <li>
+            <strong>Backlight Bleed Test</strong> — Fills the screen with pure black so that any light
+            leaking around the edges of an LCD, or IPS glow on IPS panels, becomes clearly visible in a
+            darkened room.
+          </li>
+          <li>
+            <strong>Response Time Test</strong> — Renders a fast-moving object against contrasting
+            backgrounds so you can visually assess pixel response time and ghosting — critical for gaming
+            monitors and high-refresh displays.
+          </li>
+        </ul>
+
+        <h3>OLED, AMOLED & iPhone Display Testing</h3>
+        <p>
+          OLED and AMOLED panels behave differently from traditional LCD displays. Because each pixel
+          produces its own light, an <strong>OLED screen test</strong> needs to focus on individual pixel
+          failure rather than backlight uniformity. Our dead pixel checker and color fill tests are
+          specifically effective for <strong>OLED display test</strong> and <strong>AMOLED display test</strong>
+          scenarios. iPhone users with ProMotion displays can also use the refresh rate test to confirm
+          their adaptive 120 Hz panel is scaling correctly across different content types.
+        </p>
+
+        <h3>100% Private — All Tests Run in Your Browser</h3>
+        <p>
+          Privacy is not an afterthought here. Every single <strong>screen test</strong> on this site
+          executes locally inside your browser using only standard Web APIs. We never access your camera,
+          never upload screenshots, and never track your test results. The tool works offline once loaded,
+          making it safe to use even on enterprise or restricted networks.
+        </p>
+
+        <h3>No App, No Extensions Required</h3>
+        <p>
+          Unlike dedicated apps that require installation, permissions, and ongoing updates, our
+          <strong>display test online</strong> works instantly from any modern browser — Chrome, Safari,
+          Firefox, or Edge. It is fully responsive and optimized for phones, tablets, laptops, and
+          large external monitors alike. Run it on a <strong>mobile display test</strong> directly
+          from your phone's browser without installing anything from an app store.
+        </p>
+
+        <p>
+          Ready to check your screen? Pick any test from the list above and get results in seconds.
+          Regular display tests help you catch problems early, back warranty claims with evidence, and
+          simply know that the screen you're looking at every day is performing exactly as it should.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section" aria-labelledby="faq-heading">
+    <div class="faq-inner">
+      <div class="faq-header">
+        <span class="faq-label">FAQ</span>
+        <h2 class="faq-title" id="faq-heading">Common Display Test Questions</h2>
+      </div>
+
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            How do I test my display's refresh rate?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p>Use the <a href="/tests/refresh-rate">Refresh Rate Test</a> on this site. It uses <code>requestAnimationFrame</code> timestamps to calculate the interval between frames and derives your display's actual Hz. Run it for at least 5 seconds for a stable reading — your result (e.g. 60, 120, 144, 240 Hz) appears in the large counter on the test page.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            How do I test an LCD display?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p>To fully test an LCD display, check four key areas: <strong>dead or stuck pixels</strong> (cycle solid red, green, blue, white, and black fills), <strong>backlight bleed</strong> (view a pure black screen in a dark room), <strong>refresh rate</strong> (verify the panel hits its rated Hz), and <strong>touch accuracy</strong> if it's a touchscreen. All four tests are available free on TestMyDisplay — no downloads needed.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            How do I test an OLED display?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p>OLED pixels self-emit light, so backlight bleed isn't a concern — but three checks matter most: <strong>dead pixels</strong> (a dead OLED pixel stays permanently black), <strong>burn-in / image retention</strong> (display a uniform mid-gray and look for ghost outlines of static UI elements), and <strong>refresh rate</strong> (most modern OLEDs run at 120 Hz or higher). Use the Dead Pixel and Refresh Rate tests here to cover all three.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            How do I test an iPhone display?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p>Open any test on this site in Safari on your iPhone — all tests run directly in the browser with no app needed. The <a href="/tests/refresh-rate">Refresh Rate Test</a> correctly reads ProMotion (120 Hz) on supported models. For dead pixels, run the <a href="/tests/dead-pixel">Dead Pixel Check</a> in full-screen mode and swipe through each color. For touch issues, use the <a href="/tests/touch">Touch Screen Test</a> after a screen repair.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            How do I test a laptop display?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p>Run this checklist on your laptop browser: (1) <strong>Refresh rate</strong> — compare this tool's reading with what your GPU driver reports under Display Settings. (2) <strong>Dead / stuck pixels</strong> — run the Dead Pixel Check at full brightness. (3) <strong>Backlight bleed</strong> — display a pure black page in a dark room and look for light leakage around edges. (4) <strong>Response time</strong> — check for ghosting during fast motion using the Response Time test. On Windows, <em>Settings → System → Display → Advanced display</em> also shows the advertised Hz.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            How do I test a Retina display?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p>Apple's Retina label means pixels are dense enough to be indistinguishable at a normal viewing distance. To verify it's working correctly: run the <a href="/tests/refresh-rate">Refresh Rate Test</a> (ProMotion Macs should hit 120 Hz), check for <strong>dead pixels</strong> on a solid white screen, and confirm gradients render smoothly without visible banding. On macOS, hold <kbd>Option</kbd> and open Display preferences to confirm the panel is running at its native HiDPI resolution.</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary class="faq-question">
+            What is a good refresh rate for a display?
+            <svg class="faq-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div class="faq-answer">
+            <p><strong>60 Hz</strong> is the standard minimum for comfortable everyday use. <strong>90–120 Hz</strong> feels noticeably smoother for general browsing, video, and casual gaming. <strong>144 Hz and above</strong> benefits competitive gamers where reduced motion blur provides a real advantage. If the <a href="/tests/refresh-rate">Refresh Rate Test</a> reports a value significantly lower than your display's rated speed, check your GPU driver — you may need to manually select the higher refresh rate under Display Settings.</p>
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I test my display's refresh rate?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the Refresh Rate Test on TestMyDisplay. It uses requestAnimationFrame timestamps to calculate the interval between frames and derives your display's actual Hz. Run it for at least 5 seconds for a stable reading — your result (e.g. 60, 120, 144, 240 Hz) appears in the large counter on the test page."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I test an LCD display?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "To fully test an LCD display, check four key areas: dead or stuck pixels (cycle solid red, green, blue, white, and black fills), backlight bleed (view a pure black screen in a dark room), refresh rate (verify the panel hits its rated Hz), and touch accuracy if it's a touchscreen. All four tests are available free on TestMyDisplay with no downloads needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I test an OLED display?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "OLED pixels self-emit light, so backlight bleed is not a concern. The three most important checks are: dead pixels (a dead OLED pixel stays permanently black), burn-in or image retention (display a uniform mid-gray and look for ghost outlines of static UI elements), and refresh rate (most modern OLEDs run at 120 Hz or higher). Use the Dead Pixel and Refresh Rate tests on TestMyDisplay to cover all three."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I test an iPhone display?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Open any test on TestMyDisplay in Safari on your iPhone — all tests run in the browser with no app needed. The Refresh Rate Test correctly reads ProMotion (120 Hz) on supported models. For dead pixels, run the Dead Pixel Check in full-screen mode and swipe through each color. For touch issues, use the Touch Screen Test after a screen repair."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I test a laptop display?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Run this checklist on your laptop browser: (1) Refresh rate — compare the tool's reading with your GPU driver's Display Settings. (2) Dead or stuck pixels — run the Dead Pixel Check at full brightness. (3) Backlight bleed — display a pure black page in a dark room and look for light leakage around edges. (4) Response time — check for ghosting using the Response Time test. On Windows, Settings → System → Display → Advanced display also shows the advertised Hz."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I test a Retina display?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Apple's Retina label means pixels are dense enough to be indistinguishable at a normal viewing distance. To verify it is working correctly: run the Refresh Rate Test (ProMotion Macs should hit 120 Hz), check for dead pixels on a solid white screen, and confirm gradients render smoothly without visible banding. On macOS, hold Option and open Display preferences to confirm the panel is running at its native HiDPI resolution."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a good refresh rate for a display?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "60 Hz is the standard minimum for comfortable everyday use. 90 to 120 Hz feels noticeably smoother for general browsing, video, and casual gaming. 144 Hz and above benefits competitive gamers where reduced motion blur provides a real advantage. If the Refresh Rate Test reports a value significantly lower than your display's rated speed, check your GPU driver — you may need to manually select the higher refresh rate under Display Settings."
+      }
+    }
+  ]
+}
+</script>
 
 <script>
   function updateDeviceStats() {
@@ -479,5 +752,201 @@ const tests = [
     .hero-actions a {
       text-align: center;
     }
+  }
+
+  /* SEO Article */
+  .seo-article-section {
+    padding: 64px 32px 96px;
+    background: transparent;
+    border-top: 1px solid var(--border);
+  }
+
+  .seo-article-inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .seo-article-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.4px;
+    margin: 0 0 20px;
+    line-height: 1.35;
+  }
+
+  .seo-article p {
+    font-size: 15px;
+    line-height: 26px;
+    color: var(--text-body);
+    margin: 0 0 18px;
+  }
+
+  .seo-article h3 {
+    font-size: 16px;
+    font-weight: 650;
+    color: var(--text);
+    margin: 32px 0 10px;
+    letter-spacing: -0.2px;
+  }
+
+  .seo-article ul {
+    margin: 0 0 18px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .seo-article ul li {
+    font-size: 15px;
+    line-height: 25px;
+    color: var(--text-body);
+  }
+
+  .seo-article strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .seo-article-section {
+      padding: 48px 20px 72px;
+    }
+    .seo-article-title {
+      font-size: 19px;
+    }
+  }
+
+  /* ── FAQ Section ─────────────────────────────────────────────────── */
+  .faq-section {
+    padding: 0 32px 96px;
+    background: transparent;
+  }
+
+  .faq-inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .faq-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .faq-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent-border);
+    border-radius: 9999px;
+    padding: 3px 10px;
+    flex-shrink: 0;
+  }
+
+  .faq-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    letter-spacing: -0.3px;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    transition: color 0.15s;
+  }
+
+  .faq-question::-webkit-details-marker { display: none; }
+  .faq-question:hover { color: var(--accent); }
+
+  .faq-chevron {
+    color: var(--text-mute);
+    flex-shrink: 0;
+    transition: transform 0.2s ease, color 0.15s;
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+    color: var(--accent);
+  }
+
+  .faq-item[open] > .faq-question { color: var(--accent); }
+
+  .faq-answer {
+    padding: 0 0 20px;
+    animation: faq-reveal 0.2s ease;
+  }
+
+  @keyframes faq-reveal {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .faq-answer p {
+    font-size: 15px;
+    line-height: 26px;
+    color: var(--text-body);
+    margin: 0;
+  }
+
+  .faq-answer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .faq-answer a:hover { text-decoration: underline; }
+
+  .faq-answer code {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--accent);
+  }
+
+  .faq-answer kbd {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 12px;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--text);
+  }
+
+  @media (max-width: 768px) {
+    .faq-section { padding: 0 20px 72px; }
+    .faq-title { font-size: 18px; }
+    .faq-question { font-size: 14px; padding: 15px 0; }
+    .faq-answer p { font-size: 14px; line-height: 24px; }
   }
 </style>
